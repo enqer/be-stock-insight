@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.1.2" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.23" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StockInsight.Features\StockInsight.Features.csproj" />
+    <ProjectReference Include="..\StockInsight.Infrastructure\StockInsight.Infrastructure.csproj" />
+    <ProjectReference Include="..\StockInsight.YahooFinance\StockInsight.YahooFinance.csproj" />
+    <ProjectReference Include="..\StockInsight.ServiceDefaults\StockInsight.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>

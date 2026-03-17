@@ -1,0 +1,19 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.1.2">
+  <ItemGroup>
+    <ProjectReference Include="..\StockInsight.API\StockInsight.API.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.1.2" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>439e5066-b603-4e3a-8ac9-4119f300c462</UserSecretsId>
+	<RootNamespace>StockInsight.AppHost</RootNamespace>
+  </PropertyGroup>
+
+</Project>

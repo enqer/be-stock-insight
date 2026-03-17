@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/StockInsight.API/StockInsight.API.csproj" />
+    <Project Path="src/StockInsight.AppHost/StockInsight.AppHost.csproj" />
+    <Project Path="src/StockInsight.Domain/StockInsight.Domain.csproj" />
+    <Project Path="src/StockInsight.Features/StockInsight.Features.csproj" />
+    <Project Path="src/StockInsight.Infrastructure/StockInsight.Infrastructure.csproj" />
+    <Project Path="src/StockInsight.ServiceDefaults/StockInsight.ServiceDefaults.csproj" />
+    <Project Path="src/StockInsight.YahooFinance/StockInsight.YahooFinance.csproj" />
+  </Folder>
+</Solution>
