@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StockInsight.Domain\StockInsight.Domain.csproj" />
-    <ProjectReference Include="..\StockInsight.YahooFinance\StockInsight.YahooFinance.csproj" />
     <ProjectReference Include="..\StockInsight.Infrastructure\StockInsight.Infrastructure.csproj" />
   </ItemGroup>
 

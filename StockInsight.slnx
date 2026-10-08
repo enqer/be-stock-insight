@@ -6,6 +6,5 @@
     <Project Path="src/StockInsight.Features/StockInsight.Features.csproj" />
     <Project Path="src/StockInsight.Infrastructure/StockInsight.Infrastructure.csproj" />
     <Project Path="src/StockInsight.ServiceDefaults/StockInsight.ServiceDefaults.csproj" />
-    <Project Path="src/StockInsight.YahooFinance/StockInsight.YahooFinance.csproj" />
   </Folder>
 </Solution>
