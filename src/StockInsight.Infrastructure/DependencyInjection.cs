@@ -1,12 +1,14 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using StockInsight.Infrastructure.Persistence;
 
 namespace StockInsight.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
+    public static IHostApplicationBuilder AddInfrastructure(this IHostApplicationBuilder builder)
     {
-        return services;
+        builder.AddNpgsqlDbContext<AppDbContext>(AppDbContext.ConnectionName);
+
+        return builder;
     }
 }

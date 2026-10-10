@@ -441,3 +441,11 @@ FodyWeavers.xsd
 
 # tmp directory
 tmp/
+# Local environment & secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Windows
+Desktop.ini

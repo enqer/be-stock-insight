@@ -1,4 +1,10 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/StockInsight.API/StockInsight.API.csproj" />
     <Project Path="src/StockInsight.AppHost/StockInsight.AppHost.csproj" />
@@ -6,5 +12,11 @@
     <Project Path="src/StockInsight.Features/StockInsight.Features.csproj" />
     <Project Path="src/StockInsight.Infrastructure/StockInsight.Infrastructure.csproj" />
     <Project Path="src/StockInsight.ServiceDefaults/StockInsight.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <File Path="tests/Directory.Build.props" />
+    <Project Path="tests/StockInsight.Domain.Tests/StockInsight.Domain.Tests.csproj" />
+    <Project Path="tests/StockInsight.Features.Tests/StockInsight.Features.Tests.csproj" />
+    <Project Path="tests/StockInsight.IntegrationTests/StockInsight.IntegrationTests.csproj" />
   </Folder>
 </Solution>
