@@ -1,7 +1,6 @@
-﻿
 namespace StockInsight.Domain.ValueObjects;
 
-public record Ticker
+public sealed record Ticker
 {
     public string Symbol { get; }
 
