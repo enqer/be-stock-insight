@@ -2,7 +2,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var postgres = builder.AddPostgres("postgres")
     .WithDataVolume()
-    .WithPgAdmin()
+    .WithPgAdmin(pgAdmin => pgAdmin.WithHostPort(5050))
     .WithLifetime(ContainerLifetime.Persistent);
 
 var database = postgres.AddDatabase("stockinsight");
