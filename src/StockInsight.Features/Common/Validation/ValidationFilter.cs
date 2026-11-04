@@ -2,9 +2,6 @@ using FluentValidation;
 
 namespace StockInsight.Features.Common.Validation;
 
-/// <summary>
-/// Runs the slice's FluentValidation validator for <typeparamref name="TRequest"/> before the endpoint handler.
-/// </summary>
 internal sealed class ValidationFilter<TRequest>(IValidator<TRequest> validator) : IEndpointFilter
 {
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
@@ -16,12 +13,4 @@ internal sealed class ValidationFilter<TRequest>(IValidator<TRequest> validator)
             ? await next(context)
             : TypedResults.ValidationProblem(result.ToDictionary());
     }
-}
-
-internal static class ValidationFilterExtensions
-{
-    public static RouteHandlerBuilder WithRequestValidation<TRequest>(this RouteHandlerBuilder builder) =>
-        builder
-            .AddEndpointFilter<ValidationFilter<TRequest>>()
-            .ProducesValidationProblem();
 }
