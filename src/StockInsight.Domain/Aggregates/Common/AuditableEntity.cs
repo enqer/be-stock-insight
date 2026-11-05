@@ -1,6 +1,6 @@
-﻿namespace StockInsight.Domain.Abstract;
+﻿namespace StockInsight.Domain.Aggregates.Common;
 
-public class Entity : IEntity
+public class AuditableEntity
 {
     public int CreatedById { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
