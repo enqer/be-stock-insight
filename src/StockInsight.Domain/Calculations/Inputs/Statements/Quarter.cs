@@ -69,7 +69,6 @@ public sealed record Quarter
 
     public string Label => string.Create(CultureInfo.InvariantCulture, $"Q{Period.Month / 3} {Period.Year}");
 
-    // Suma bilansowa odtwarzana z SUROWYCH aktywów, reguła zera dopiero potem — kolejność clean_series.
     public static Quarter From(StandardStatement statement) => new()
     {
         Period = statement.Period,

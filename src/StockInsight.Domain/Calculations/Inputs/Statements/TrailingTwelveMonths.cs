@@ -16,7 +16,6 @@ public static class TrailingTwelveMonths
         {
             if (item(quarters[k]) is not { } v)
             {
-                // Brak choć jednej wartości to brak, nie suma częściowa.
                 return null;
             }
 
