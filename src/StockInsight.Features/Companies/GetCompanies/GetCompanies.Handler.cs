@@ -1,4 +1,4 @@
-using StockInsight.Domain.Aggregates.Instruments;
+using StockInsight.Domain.Aggregates.Instruments.Enums;
 using StockInsight.Features.Common.Handlers;
 using StockInsight.Features.Companies.GetCompanies.Models;
 using StockInsight.Infrastructure.Persistence;

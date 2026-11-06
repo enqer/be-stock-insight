@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Http.HttpResults;
-using StockInsight.Domain.Statements;
+using StockInsight.Domain.Aggregates.Companies.Enums;
 using StockInsight.Features.Common.Endpoints;
 
 namespace StockInsight.Features.Companies.GetCompanies;
 
 public static partial class GetCompanies
 {
-    public sealed record Response(Guid Id, string Ticker, string Name, FinancialProfile FinancialProfile, double Close, double Volume);
+    public sealed record Response(Guid Id, string Ticker, string Name, FinancialProfile FinancialProfile, double? Close, double? Volume);
 
     internal sealed class Endpoint : IEndpoint
     {
