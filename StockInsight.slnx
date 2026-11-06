@@ -15,8 +15,10 @@
   </Folder>
   <Folder Name="/tests/">
     <File Path="tests/Directory.Build.props" />
+    <Project Path="tests/StockInsight.AcceptanceTests/StockInsight.AcceptanceTests.csproj" />
     <Project Path="tests/StockInsight.Domain.Tests/StockInsight.Domain.Tests.csproj" />
     <Project Path="tests/StockInsight.Features.Tests/StockInsight.Features.Tests.csproj" />
+    <Project Path="tests/StockInsight.Infrastructure.Tests/StockInsight.Infrastructure.Tests.csproj" />
     <Project Path="tests/StockInsight.IntegrationTests/StockInsight.IntegrationTests.csproj" />
   </Folder>
 </Solution>
