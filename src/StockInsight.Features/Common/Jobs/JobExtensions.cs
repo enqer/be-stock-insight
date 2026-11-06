@@ -1,19 +1,16 @@
-using System.Reflection;
 using Hangfire;
+using Hangfire.Common;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Reflection;
 
 namespace StockInsight.Features.Common.Jobs;
 
 internal static class JobExtensions
 {
-    private static readonly TimeZoneInfo _warsaw = TimeZoneInfo.FindSystemTimeZoneById("Europe/Warsaw");
-
-    private static readonly MethodInfo _schedule =
-        typeof(JobExtensions).GetMethod(nameof(Schedule), BindingFlags.NonPublic | BindingFlags.Static)!;
-
     public static IServiceCollection AddJobs(this IServiceCollection services, Assembly assembly)
     {
-        foreach (var jobType in JobTypes(assembly))
+        foreach (var jobType in assembly.ConcreteTypesOf<IJob>())
         {
             services.TryAddScoped(jobType);
         }
@@ -21,24 +18,17 @@ internal static class JobExtensions
         return services;
     }
 
-    public static IRecurringJobManager ScheduleJobs(this IRecurringJobManager manager, Assembly assembly)
+    public static IRecurringJobManager ScheduleJobs(this IRecurringJobManager manager, Assembly assembly, IConfiguration configuration)
     {
-        foreach (var jobType in JobTypes(assembly))
+        foreach (var jobType in assembly.ConcreteTypesOf<IJob>())
         {
-            _schedule.MakeGenericMethod(jobType).Invoke(null, [manager]);
+            var id = jobType.DeclaringType?.Name ?? jobType.Name;
+            var cron = configuration[$"Jobs:{id}"]
+                ?? throw new InvalidOperationException($"missing schedule for job '{id}' (configuration key 'Jobs:{id}')");
+            var job = new Job(jobType, jobType.GetMethod(nameof(IJob.RunAsync))!, CancellationToken.None);
+            manager.AddOrUpdate(id, job, cron, new RecurringJobOptions { TimeZone = MarketTime.Zone });
         }
 
         return manager;
     }
-
-    private static void Schedule<TJob>(IRecurringJobManager manager)
-        where TJob : IJob =>
-        manager.AddOrUpdate<TJob>(
-            typeof(TJob).DeclaringType?.Name ?? typeof(TJob).Name,
-            job => job.RunAsync(CancellationToken.None),
-            TJob.Cron,
-            new RecurringJobOptions { TimeZone = _warsaw });
-
-    private static IEnumerable<Type> JobTypes(Assembly assembly) =>
-        assembly.DefinedTypes.Where(type => type is { IsAbstract: false, IsInterface: false } && type.IsAssignableTo(typeof(IJob)));
 }
