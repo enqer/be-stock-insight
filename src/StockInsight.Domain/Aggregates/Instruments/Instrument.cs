@@ -1,4 +1,5 @@
-using StockInsight.Domain.Interfaces;
+using StockInsight.Domain.Aggregates.Common;
+using StockInsight.Domain.Aggregates.Instruments.Enums;
 using StockInsight.Domain.ValueObjects;
 
 namespace StockInsight.Domain.Aggregates.Instruments;

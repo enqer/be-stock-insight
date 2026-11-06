@@ -1,10 +1,9 @@
-using StockInsight.Domain.Abstract;
-using StockInsight.Domain.Interfaces;
-using StockInsight.Domain.Statements;
+using StockInsight.Domain.Aggregates.Common;
+using StockInsight.Domain.Aggregates.Companies.Enums;
 
 namespace StockInsight.Domain.Aggregates.Companies;
 
-public sealed class Company : Entity, IAggregateRoot
+public sealed class Company : AuditableEntity, IAggregateRoot
 {
     private readonly List<Statement> _statements = [];
 

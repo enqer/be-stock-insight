@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Hangfire;
 using Microsoft.AspNetCore.OpenApi;
 using Scalar.AspNetCore;
@@ -15,6 +16,7 @@ builder.AddInfrastructure();
 builder.Services.AddFeatures();
 builder.Services.AddHangfireServer();
 builder.Services.AddProblemDetails();
+builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddOpenApi(options =>
 {
     options.CreateSchemaReferenceId = type =>
@@ -28,16 +30,17 @@ var app = builder.Build();
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 
+await app.ApplyMigrationsAsync();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
-    await app.ApplyMigrationsAsync();
     await app.SeedHistoricalPricesAsync();
     app.UseHangfireDashboard("/hangfire");
 }
 
-app.Services.GetRequiredService<IRecurringJobManager>().ScheduleFeatureJobs();
+app.Services.GetRequiredService<IRecurringJobManager>().ScheduleFeatureJobs(app.Configuration);
 
 app.MapDefaultEndpoints();
 app.MapFeatures();

@@ -1,4 +1,4 @@
-namespace StockInsight.Domain.Aggregates.Instruments;
+namespace StockInsight.Domain.Aggregates.Instruments.Enums;
 
 public enum InstrumentKind
 {
