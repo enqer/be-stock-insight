@@ -11,7 +11,8 @@ public sealed class CompanyRow
             instrument.ticker,
             company.financial_profile,
             daily_price.close,
-            daily_price.volume
+            daily_price.volume,
+            recent.recent_closes
         FROM instruments instrument
         INNER JOIN companies company ON instrument.company_id = company.id
         LEFT JOIN LATERAL (
@@ -21,6 +22,12 @@ public sealed class CompanyRow
             ORDER BY prices.date DESC
             LIMIT 1
         ) daily_price ON true
+        LEFT JOIN LATERAL (
+            SELECT array_agg(prices.close ORDER BY prices.date) AS recent_closes
+            FROM daily_prices prices
+            WHERE prices.instrument_id = instrument.id
+                AND prices.date > @From
+        ) recent ON true
         WHERE instrument.kind = @InstrumentKind
         ORDER BY instrument.ticker
         """;
@@ -31,4 +38,5 @@ public sealed class CompanyRow
     public FinancialProfile FinancialProfile { get; init; }
     public double? Close { get; init; }
     public double? Volume { get; init; }
+    public IReadOnlyList<double>? RecentCloses { get; init; }
 }
