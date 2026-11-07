@@ -36,7 +36,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
-    await app.SeedHistoricalPricesAsync();
+    await app.SeedDevelopmentDataAsync();
     app.UseHangfireDashboard("/hangfire");
 }
 

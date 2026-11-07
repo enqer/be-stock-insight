@@ -14,7 +14,7 @@ public static class Wacc
 
     public static WaccValue? At(IReadOnlyList<Quarter> quarters, int t, double riskFreeRate, double unleveredBeta)
     {
-        var revenue = TrailingTwelveMonths.Sum(quarters, t, q => q.Revenue);
+        var revenue = TrailingTwelveMonths.Sum(quarters, t, x => x.Revenue);
         var debt = Debt.At(quarters, t).Amount;
         var debtYearAgo = Debt.At(quarters, Math.Max(0, t - 4)).Amount;
 
@@ -23,7 +23,7 @@ public static class Wacc
             return null;
         }
 
-        var financeCost = TrailingTwelveMonths.Sum(quarters, t, q => q.FinancialExpenses);
+        var financeCost = TrailingTwelveMonths.Sum(quarters, t, x => x.FinancialExpenses);
         var measured = SignificantRatio.Of(
             Math.Abs(financeCost ?? 0.0), (debt + debtYearAgo) / 2, revenue, DebtSignificanceShareOfRevenue);
         var costOfDebt = measured is { } kd && kd > MinPlausibleCostOfDebt && kd < MaxPlausibleCostOfDebt

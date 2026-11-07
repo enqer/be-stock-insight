@@ -56,7 +56,7 @@ public static partial class SyncFinancialStatements
                 return;
             }
 
-            var company = await dbContext.Companies.Include(c => c.Statements).SingleOrDefaultAsync(x => x.Slug == slug, cancellationToken);
+            var company = await dbContext.Companies.Include(x => x.Statements).SingleOrDefaultAsync(x => x.Slug == slug, cancellationToken);
             if (company is null)
             {
                 company = Company.Create(slug, details.IsBank ? FinancialProfile.Bank : FinancialProfile.Standard);

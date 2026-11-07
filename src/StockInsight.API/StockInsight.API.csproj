@@ -2,8 +2,10 @@
 
   <ItemGroup>
     <PackageReference Include="Hangfire.AspNetCore" />
-    <!-- Hangfire pulls Newtonsoft.Json 11.x (GHSA-5crp-9r3c-p9vr); pin a patched version -->
-    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Scalar.AspNetCore" />
   </ItemGroup>

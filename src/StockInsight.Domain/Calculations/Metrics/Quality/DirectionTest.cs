@@ -8,17 +8,17 @@ public static class DirectionTest
 
     public static int? CriteriaMet(IReadOnlyList<Quarter> quarters, int t)
     {
-        var revenueNow = TrailingTwelveMonths.Sum(quarters, t, q => q.Revenue);
-        var revenueBefore = TrailingTwelveMonths.Sum(quarters, t - 4, q => q.Revenue);
+        var revenueNow = TrailingTwelveMonths.Sum(quarters, t, x => x.Revenue);
+        var revenueBefore = TrailingTwelveMonths.Sum(quarters, t - 4, x => x.Revenue);
         var incomeNow = ContinuingNetIncome(quarters, t);
         var incomeBefore = ContinuingNetIncome(quarters, t - 4);
 
-        var profitNow = TrailingTwelveMonths.Sum(quarters, t, q => q.GrossProfitOnSales);
-        var profitBefore = TrailingTwelveMonths.Sum(quarters, t - 4, q => q.GrossProfitOnSales);
+        var profitNow = TrailingTwelveMonths.Sum(quarters, t, x => x.GrossProfitOnSales);
+        var profitBefore = TrailingTwelveMonths.Sum(quarters, t - 4, x => x.GrossProfitOnSales);
         if (profitNow is null || profitBefore is null)
         {
-            profitNow = TrailingTwelveMonths.Sum(quarters, t, q => q.ProfitOnSales);
-            profitBefore = TrailingTwelveMonths.Sum(quarters, t - 4, q => q.ProfitOnSales);
+            profitNow = TrailingTwelveMonths.Sum(quarters, t, x => x.ProfitOnSales);
+            profitBefore = TrailingTwelveMonths.Sum(quarters, t - 4, x => x.ProfitOnSales);
         }
 
         if (revenueNow is not { } r1 || revenueBefore is not { } r0 || incomeNow is not { } n1
@@ -38,5 +38,5 @@ public static class DirectionTest
     }
 
     private static double? ContinuingNetIncome(IReadOnlyList<Quarter> quarters, int t) =>
-        TrailingTwelveMonths.Sum(quarters, t, q => q.NetProfit - (q.DiscontinuedOperations ?? 0.0));
+        TrailingTwelveMonths.Sum(quarters, t, x => x.NetProfit - (x.DiscontinuedOperations ?? 0.0));
 }

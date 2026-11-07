@@ -2,6 +2,7 @@ using Hangfire;
 using Hangfire.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using StockInsight.Infrastructure.Time;
 using System.Reflection;
 
 namespace StockInsight.Features.Common.Jobs;

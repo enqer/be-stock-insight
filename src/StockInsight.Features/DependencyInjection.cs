@@ -1,6 +1,9 @@
 using StockInsight.Features.Common.Endpoints;
 using StockInsight.Features.Common.Handlers;
-using FluentValidation;
+using StockInsight.Features.Common.Jobs;
+using StockInsight.Features.Decisions.Common;
+using Hangfire;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace StockInsight.Features;
@@ -11,13 +14,16 @@ public static class DependencyInjection
     {
         var assembly = typeof(DependencyInjection).Assembly;
 
-        services.TryAddSingleton(TimeProvider.System);
         services.AddEndpoints(assembly);
         services.AddHandlers(assembly);
-        services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
+        services.AddJobs(assembly);
+        services.TryAddScoped<DecisionUniverseLoader>();
 
         return services;
     }
 
     public static IEndpointRouteBuilder MapFeatures(this IEndpointRouteBuilder app) => app.MapEndpoints();
+
+    public static IRecurringJobManager ScheduleFeatureJobs(this IRecurringJobManager manager, IConfiguration configuration) =>
+        manager.ScheduleJobs(typeof(DependencyInjection).Assembly, configuration);
 }

@@ -19,8 +19,8 @@ public static class CashConversion
             var capital = InvestedCapital.At(quarters, k, minoritiesInsideEquity).Value;
             var scale = capital > 0 ? capital : null;
             var ratio = SignificantRatio.Of(
-                TrailingTwelveMonths.Sum(quarters, k, q => q.OperatingCashFlow),
-                TrailingTwelveMonths.Sum(quarters, k, q => q.NetProfit),
+                TrailingTwelveMonths.Sum(quarters, k, x => x.OperatingCashFlow),
+                TrailingTwelveMonths.Sum(quarters, k, x => x.NetProfit),
                 scale,
                 MinProfitShareOfCapital);
             if (ratio is { } r)

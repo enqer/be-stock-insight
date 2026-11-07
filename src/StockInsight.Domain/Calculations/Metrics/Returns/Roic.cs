@@ -11,7 +11,7 @@ public static class Roic
 
     public static Measured<double> At(IReadOnlyList<Quarter> quarters, int t, bool minoritiesInsideEquity)
     {
-        if (TrailingTwelveMonths.Sum(quarters, t, q => q.Ebit) is not { } ebit)
+        if (TrailingTwelveMonths.Sum(quarters, t, x => x.Ebit) is not { } ebit)
         {
             return Measured<double>.Missing("brak EBIT za 12 miesięcy");
         }

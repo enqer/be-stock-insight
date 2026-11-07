@@ -1,10 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
 
-    <PackageReference Include="FluentValidation" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Hangfire.Core" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +20,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="StockInsight.Features.Tests" />
+    <InternalsVisibleTo Include="StockInsight.AcceptanceTests" />
   </ItemGroup>
 
 </Project>

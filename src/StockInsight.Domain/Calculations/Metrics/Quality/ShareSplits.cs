@@ -14,7 +14,7 @@ public static class ShareSplits
     public static ShareHistory Normalise(IReadOnlyList<Quarter> quarters)
     {
         var n = quarters.Count;
-        var shares = quarters.Select(q => q.Shares).ToArray();
+        var shares = quarters.Select(x => x.Shares).ToArray();
 
         var factor = Enumerable.Repeat(1.0, n).ToArray();
         var ambiguousBefore = 0;
@@ -61,7 +61,7 @@ public static class ShareSplits
         }
 
         var adjusted = shares.Select((s, i) => s is { } v && v != 0 ? v * factor[i] : (double?)null).ToArray();
-        var bases = Enumerable.Range(0, n).Select(i => i < ambiguousBefore ? ShareBase.Ambiguous : ShareBase.Unified).ToArray();
+        var bases = Enumerable.Range(0, n).Select(x => x < ambiguousBefore ? ShareBase.Ambiguous : ShareBase.Unified).ToArray();
         return new ShareHistory(adjusted, bases);
     }
 

@@ -73,7 +73,7 @@ public sealed record Quarter
     {
         Period = statement.Period,
         PublishedAt = statement.PublishedAt,
-        Revenue = NullIfZero(statement.Revenue),
+        Revenue = statement.Revenue,
         GrossProfitOnSales = statement.GrossProfitOnSales,
         ProfitOnSales = statement.ProfitOnSales,
         Ebit = statement.Ebit,
@@ -88,8 +88,8 @@ public sealed record Quarter
         LeasePayments = statement.LeasePayments,
         Dividends = statement.Dividends,
         Cash = statement.Cash,
-        TotalAssets = NullIfZero(statement.TotalAssets ?? statement.NonCurrentAssets + statement.CurrentAssets),
-        Equity = NullIfZero(statement.Equity),
+        TotalAssets = statement.TotalAssets,
+        Equity = statement.Equity,
         MinorityInterests = statement.MinorityInterests,
         NonCurrentLiabilities = statement.NonCurrentLiabilities,
         CurrentLiabilities = statement.CurrentLiabilities,
@@ -103,6 +103,4 @@ public sealed record Quarter
         ShareCapital = statement.ShareCapital,
         ShareIssue = statement.ShareIssue,
     };
-
-    private static double? NullIfZero(double? value) => value == 0 ? null : value;
 }

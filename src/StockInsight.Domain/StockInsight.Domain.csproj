@@ -1,5 +1,2 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <!-- Pure domain model: no references to EF Core, ASP.NET or other infrastructure. -->
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
 </Project>

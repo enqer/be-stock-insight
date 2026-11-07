@@ -26,5 +26,5 @@ public sealed class RiskFreeRate
         }
     }
 
-    public double On(DateOnly date) => (_history.LastOrDefault(e => e.From <= date) ?? _history[0]).Rate;
+    public double On(DateOnly date) => (_history.LastOrDefault(x => x.From <= date) ?? _history[0]).Rate;
 }

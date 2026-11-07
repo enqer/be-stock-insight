@@ -66,5 +66,5 @@ public static class Roiic
     }
 
     private static double? Nopat(IReadOnlyList<Quarter> quarters, int t) =>
-        TrailingTwelveMonths.Sum(quarters, t, q => q.Ebit) * (1 - MarketConstants.TaxRate);
+        TrailingTwelveMonths.Sum(quarters, t, x => x.Ebit) * (1 - MarketConstants.TaxRate);
 }

@@ -8,7 +8,7 @@ internal static class EndpointExtensions
     public static IServiceCollection AddEndpoints(this IServiceCollection services, Assembly assembly)
     {
         var descriptors = assembly.ConcreteTypesOf<IEndpoint>()
-            .Select(type => ServiceDescriptor.Transient(typeof(IEndpoint), type));
+            .Select(x => ServiceDescriptor.Transient(typeof(IEndpoint), x));
 
         services.TryAddEnumerable(descriptors);
 

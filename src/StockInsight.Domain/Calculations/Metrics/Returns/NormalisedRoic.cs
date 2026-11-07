@@ -11,7 +11,7 @@ public static class NormalisedRoic
 
     public static Measured<double> At(IReadOnlyList<Quarter> quarters, int t, int cycleYears, double? averageCapital)
     {
-        if (TrailingTwelveMonths.Sum(quarters, t, q => q.Revenue) is not { } revenue)
+        if (TrailingTwelveMonths.Sum(quarters, t, x => x.Revenue) is not { } revenue)
         {
             return Measured<double>.Missing("brak przychodów za 12 miesięcy");
         }
@@ -24,8 +24,8 @@ public static class NormalisedRoic
         var margins = new List<double>();
         for (var k = Math.Max(4, t - 4 * cycleYears + 1); k <= t; k++)
         {
-            if (TrailingTwelveMonths.Sum(quarters, k, q => q.Ebit) is { } ebit
-                && TrailingTwelveMonths.Sum(quarters, k, q => q.Revenue) is { } rev && rev > 0)
+            if (TrailingTwelveMonths.Sum(quarters, k, x => x.Ebit) is { } ebit
+                && TrailingTwelveMonths.Sum(quarters, k, x => x.Revenue) is { } rev && rev > 0)
             {
                 margins.Add(ebit / rev);
             }

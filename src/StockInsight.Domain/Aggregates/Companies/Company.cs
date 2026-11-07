@@ -32,7 +32,7 @@ public sealed class Company : AuditableEntity, IAggregateRoot
     {
         var latest = _statements
             .GroupBy(x => x.Period)
-            .ToDictionary(x => x.Key, x => x.MaxBy(s => s.FetchedAt)!);
+            .ToDictionary(x => x.Key, x => x.MaxBy(y => y.FetchedAt)!);
 
         var added = new List<Statement>();
         foreach (var statement in statements)

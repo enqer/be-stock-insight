@@ -4,7 +4,7 @@ public sealed class PriceSeries
 {
     public PriceSeries(IEnumerable<PricePoint> points)
     {
-        Points = [.. points.OrderBy(p => p.Date).ThenBy(p => p.Close)];
+        Points = [.. points.OrderBy(x => x.Date).ThenBy(x => x.Close)];
         foreach (var point in Points)
         {
             if (!double.IsFinite(point.Close) || point.Close <= 0)
