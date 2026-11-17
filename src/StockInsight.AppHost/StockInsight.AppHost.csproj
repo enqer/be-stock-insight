@@ -1,8 +1,7 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.6.1">
+<Project Sdk="Aspire.AppHost.Sdk/13.6.5">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <!-- DCP/dashboard come from NuGet packages; the Aspire CLI bundle is not required -->
     <NoWarn>$(NoWarn);ASPIRE010</NoWarn>
     <UserSecretsId>439e5066-b603-4e3a-8ac9-4119f300c462</UserSecretsId>
   </PropertyGroup>
