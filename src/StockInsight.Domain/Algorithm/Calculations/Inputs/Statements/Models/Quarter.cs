@@ -31,12 +31,6 @@ public sealed record Quarter
 
     public double? TotalCashFlow { get; init; }
 
-    public double? Capex { get; init; }
-
-    public double? LeasePayments { get; init; }
-
-    public double? Dividends { get; init; }
-
     public double? Cash { get; init; }
 
     public double? TotalAssets { get; init; }
@@ -84,9 +78,6 @@ public sealed record Quarter
         InvestingCashFlow = statement.InvestingCashFlow,
         FinancingCashFlow = statement.FinancingCashFlow,
         TotalCashFlow = statement.TotalCashFlow,
-        Capex = statement.Capex,
-        LeasePayments = statement.LeasePayments,
-        Dividends = statement.Dividends,
         Cash = statement.Cash,
         TotalAssets = statement.TotalAssets,
         Equity = statement.Equity,

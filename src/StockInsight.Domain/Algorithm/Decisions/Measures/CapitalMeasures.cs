@@ -1,4 +1,3 @@
-using StockInsight.Domain.Algorithm.Calculations.Inputs.Statements;
 using StockInsight.Domain.Algorithm.Calculations.Inputs.Statements.Models;
 using StockInsight.Domain.Algorithm.Calculations.Metrics.Capital.Models;
 
@@ -16,6 +15,6 @@ public sealed record CapitalMeasures(
         var (capitalNow, previousCapital, averageCapital) =
             StockInsight.Domain.Algorithm.Calculations.Metrics.Capital.InvestedCapital.WithAverage(quarters, periodIndex, minoritiesInsideEquity);
         return new CapitalMeasures(capitalNow.Value, previousCapital, averageCapital,
-            StockInsight.Domain.Algorithm.Calculations.Metrics.Capital.Debt.At(quarters, periodIndex), quarters.At(periodIndex)?.Cash);
+            StockInsight.Domain.Algorithm.Calculations.Metrics.Capital.Debt.At(quarters, periodIndex), quarters[periodIndex].Cash);
     }
 }

@@ -1,4 +1,3 @@
-using StockInsight.Domain.Algorithm.Calculations.Inputs.Statements;
 using StockInsight.Domain.Algorithm.Calculations.Inputs.Statements.Models;
 
 namespace StockInsight.Domain.Algorithm.Calculations.Metrics.Capital;
@@ -38,5 +37,5 @@ public static class MinorityInterests
     }
 
     public static double At(IReadOnlyList<Quarter> quarters, int periodIndex, bool insideEquity) =>
-        insideEquity ? 0.0 : quarters.At(periodIndex)?.MinorityInterests ?? 0.0;
+        insideEquity ? 0.0 : quarters[periodIndex].MinorityInterests ?? 0.0;
 }

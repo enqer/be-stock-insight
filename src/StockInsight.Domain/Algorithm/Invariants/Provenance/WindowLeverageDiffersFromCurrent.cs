@@ -15,13 +15,13 @@ public static class WindowLeverageDiffersFromCurrent
         var total = 0;
         foreach (var (_, point) in IdentityCheck.Observations(universe))
         {
-            if (point.CostOfCapital.Wacc is not { } wacc || point.CostOfCapital.WindowLeverage is not { } windowLeverage)
+            if (point.CostOfCapital.Wacc is not { } wacc)
             {
                 continue;
             }
 
             total++;
-            if (Math.Abs(wacc.Components.DebtToEquity - windowLeverage) > MinDifference)
+            if (Math.Abs(wacc.Components.DebtToEquity - point.CostOfCapital.WindowLeverage) > MinDifference)
             {
                 differing++;
             }

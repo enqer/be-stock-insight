@@ -1,7 +1,6 @@
 using System.Globalization;
 using StockInsight.Domain.Algorithm.Decisions.Gate.Conditions;
 using StockInsight.Domain.Algorithm.Decisions.Gate.Conditions.Enums;
-using StockInsight.Domain.Algorithm.Decisions.Gate.Conditions.Models;
 using StockInsight.Domain.Algorithm.Decisions.Gate.Enums;
 using StockInsight.Domain.Algorithm.Decisions.Gate.Models;
 
@@ -9,7 +8,7 @@ namespace StockInsight.Domain.Algorithm.Decisions.Gate;
 
 public static class EntryGate
 {
-    public static IReadOnlyList<IEntryCondition> Conditions { get; } =
+    private static readonly IReadOnlyList<IEntryCondition> _conditions =
     [
         new WaccAvailableCondition(),
         new DirectionCondition(),
@@ -21,7 +20,7 @@ public static class EntryGate
 
     public static GateVerdict Evaluate(DecisionPoint point)
     {
-        foreach (var condition in Conditions)
+        foreach (var condition in _conditions)
         {
             var check = condition.Check(point);
             if (check.Status == ConditionStatus.Failed)
@@ -36,6 +35,4 @@ public static class EntryGate
         return new GateVerdict(true, GateReason.Passed,
             string.Create(CultureInfo.InvariantCulture, $"ROIC {roic * 100:F0}% vs WACC {wacc * 100:F1}% (zapas {headroom * 100:F0}%)"));
     }
-
-    public static IReadOnlyList<ConditionCheck> CheckAll(DecisionPoint point) => [.. Conditions.Select(x => x.Check(point))];
 }

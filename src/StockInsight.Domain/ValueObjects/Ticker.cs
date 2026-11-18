@@ -6,11 +6,7 @@ public sealed record Ticker
 
     public Ticker(string symbol)
     {
-        if (string.IsNullOrWhiteSpace(symbol))
-        {
-            throw new ArgumentException("Ticker cannot be empty");
-        }
-
+        ArgumentException.ThrowIfNullOrWhiteSpace(symbol);
         Symbol = symbol.ToUpperInvariant().Trim();
     }
 

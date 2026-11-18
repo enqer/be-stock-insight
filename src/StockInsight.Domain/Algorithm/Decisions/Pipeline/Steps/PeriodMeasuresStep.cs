@@ -24,7 +24,7 @@ public static class PeriodMeasuresStep
                 published,
                 i,
                 Roic.At(quarters, i, prepared.MinoritiesInsideEquity).OkValue,
-                Roiic.WithFallbackLag(quarters, i, prepared.MinoritiesInsideEquity).Value,
+                Roiic.WithFallbackLag(quarters, i, prepared.MinoritiesInsideEquity),
                 DirectionTest.CriteriaMet(quarters, i),
                 TrailingTwelveMonths.Sum(quarters, i, x => x.NetProfit),
                 prepared.Shares.AdjustedShares[i],

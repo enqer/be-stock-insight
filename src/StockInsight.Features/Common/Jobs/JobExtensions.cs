@@ -1,7 +1,6 @@
 using Hangfire;
 using Hangfire.Common;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using StockInsight.Infrastructure.Time;
 using System.Reflection;
 
@@ -9,16 +8,6 @@ namespace StockInsight.Features.Common.Jobs;
 
 internal static class JobExtensions
 {
-    public static IServiceCollection AddJobs(this IServiceCollection services, Assembly assembly)
-    {
-        foreach (var jobType in assembly.ConcreteTypesOf<IJob>())
-        {
-            services.TryAddScoped(jobType);
-        }
-
-        return services;
-    }
-
     public static IRecurringJobManager ScheduleJobs(this IRecurringJobManager manager, Assembly assembly, IConfiguration configuration)
     {
         foreach (var jobType in assembly.ConcreteTypesOf<IJob>())

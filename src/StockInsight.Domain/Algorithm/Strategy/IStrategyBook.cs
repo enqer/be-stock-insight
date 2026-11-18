@@ -1,5 +1,3 @@
-using StockInsight.Domain.Algorithm.Decisions.Gate.Enums;
-
 namespace StockInsight.Domain.Algorithm.Strategy;
 
 public interface IStrategyBook
@@ -10,7 +8,7 @@ public interface IStrategyBook
     bool Holds(string ticker);
     double Units(string ticker);
     double Value(DatePricing pricing);
-    void Sell(DateOnly tradeDate, string ticker, double price, GateReason reason);
+    void Sell(DateOnly tradeDate, string ticker, double price);
     void TrimTo(DateOnly tradeDate, string ticker, double targetValue, double price);
     void TopUpTo(DateOnly tradeDate, string ticker, double targetValue, double price);
     void Buy(DateOnly tradeDate, string ticker, double amount, double price);

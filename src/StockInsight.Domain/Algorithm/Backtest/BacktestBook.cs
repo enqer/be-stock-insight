@@ -1,7 +1,6 @@
 using StockInsight.Domain.Algorithm.Backtest.Enums;
 using StockInsight.Domain.Algorithm.Backtest.Models;
 using StockInsight.Domain.Algorithm.Backtest.Performance.Models;
-using StockInsight.Domain.Algorithm.Decisions.Gate.Enums;
 using StockInsight.Domain.Algorithm.Strategy;
 using StockInsight.Domain.Algorithm.Strategy.Models;
 
@@ -49,14 +48,14 @@ public sealed class BacktestBook : IStrategyBook
         return value;
     }
 
-    public void Sell(DateOnly tradeDate, string ticker, double price, GateReason reason)
+    public void Sell(DateOnly tradeDate, string ticker, double price)
     {
         var units = _holdingsInPurchaseOrder[ticker];
         Cash += units * price * _sellFactor;
         _turnover += units * price;
         _holdingsInPurchaseOrder.Remove(ticker);
         _sells++;
-        _trades.Add(new Trade(tradeDate, TradeSide.Sell, ticker, price, reason));
+        _trades.Add(new Trade(tradeDate, TradeSide.Sell, ticker, price));
     }
 
     public void TrimTo(DateOnly tradeDate, string ticker, double targetValue, double price)
@@ -88,7 +87,7 @@ public sealed class BacktestBook : IStrategyBook
             _reentries++;
         }
 
-        _trades.Add(new Trade(tradeDate, TradeSide.Buy, ticker, price, null));
+        _trades.Add(new Trade(tradeDate, TradeSide.Buy, ticker, price));
     }
 
     public void RecordRanking(RankingSnapshot snapshot) => _rankings.Add(snapshot);

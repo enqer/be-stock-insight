@@ -1,5 +1,4 @@
 using StockInsight.Domain.Aggregates.Portfolios;
-using StockInsight.Domain.Algorithm.Decisions.Gate.Enums;
 
 namespace StockInsight.Domain.Algorithm.Strategy;
 
@@ -29,7 +28,7 @@ public sealed class PortfolioStrategyBook(Portfolio portfolio, IReadOnlyDictiona
         return value;
     }
 
-    public void Sell(DateOnly tradeDate, string ticker, double price, GateReason reason)
+    public void Sell(DateOnly tradeDate, string ticker, double price)
     {
         var instrument = instrumentIdByTicker[ticker];
         portfolio.Sell(tradeDate, instrument, portfolio.Holdings().Positions[instrument], (decimal)price, 0m);

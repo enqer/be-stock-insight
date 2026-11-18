@@ -20,7 +20,7 @@ public static class Wacc
         var debt = Debt.At(quarters, periodIndex).Amount;
         var debtYearAgo = Debt.At(quarters, Math.Max(0, periodIndex - 4)).Amount;
 
-        if (quarters.At(periodIndex)?.Equity is not { } equity || equity <= 0 || revenue is null)
+        if (quarters[periodIndex].Equity is not { } equity || equity <= 0 || revenue is null)
         {
             return null;
         }

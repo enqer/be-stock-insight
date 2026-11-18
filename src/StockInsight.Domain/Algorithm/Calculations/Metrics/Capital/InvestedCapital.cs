@@ -1,4 +1,3 @@
-using StockInsight.Domain.Algorithm.Calculations.Inputs.Statements;
 using StockInsight.Domain.Algorithm.Calculations.Inputs.Statements.Models;
 
 namespace StockInsight.Domain.Algorithm.Calculations.Metrics.Capital;
@@ -7,11 +6,7 @@ public static class InvestedCapital
 {
     public static Measured<double> At(IReadOnlyList<Quarter> quarters, int periodIndex, bool minoritiesInsideEquity)
     {
-        if (quarters.At(periodIndex) is not { } quarter)
-        {
-            return Measured<double>.Missing("okres poza szeregiem");
-        }
-
+        var quarter = quarters[periodIndex];
         if (quarter.Equity is not { } equity || quarter.Cash is null)
         {
             return Measured<double>.Missing("brak kapitału własnego lub gotówki");

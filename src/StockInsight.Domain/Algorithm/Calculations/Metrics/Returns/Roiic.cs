@@ -3,7 +3,6 @@ using StockInsight.Domain.Algorithm.Calculations.Inputs.Market;
 using StockInsight.Domain.Algorithm.Calculations.Inputs.Statements;
 using StockInsight.Domain.Algorithm.Calculations.Inputs.Statements.Models;
 using StockInsight.Domain.Algorithm.Calculations.Metrics.Capital;
-using StockInsight.Domain.Algorithm.Calculations.Metrics.Enums;
 
 namespace StockInsight.Domain.Algorithm.Calculations.Metrics.Returns;
 
@@ -48,22 +47,9 @@ public static class Roiic
             : Measured<double>.Ok(roiic);
     }
 
-    public static Measured<double> WithFallbackLag(IReadOnlyList<Quarter> quarters, int periodIndex, bool minoritiesInsideEquity)
-    {
-        var primary = At(quarters, periodIndex, LagQuarters, minoritiesInsideEquity);
-        if (primary.Status is MeasureStatus.Ok or MeasureStatus.OutOfRange)
-        {
-            return primary;
-        }
-
-        var fallback = At(quarters, periodIndex, FallbackLagQuarters, minoritiesInsideEquity);
-        if (fallback.Status is MeasureStatus.Ok or MeasureStatus.OutOfRange)
-        {
-            return fallback;
-        }
-
-        return primary.Status == MeasureStatus.Missing ? fallback : primary;
-    }
+    public static double? WithFallbackLag(IReadOnlyList<Quarter> quarters, int periodIndex, bool minoritiesInsideEquity) =>
+        At(quarters, periodIndex, LagQuarters, minoritiesInsideEquity).Value
+        ?? At(quarters, periodIndex, FallbackLagQuarters, minoritiesInsideEquity).Value;
 
     private static double? Nopat(IReadOnlyList<Quarter> quarters, int periodIndex) =>
         TrailingTwelveMonths.Sum(quarters, periodIndex, x => x.Ebit) * (1 - MarketConstants.TaxRate);

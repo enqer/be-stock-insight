@@ -29,7 +29,7 @@ public static class Roic
                 string.Create(CultureInfo.InvariantCulture, $"średni kapitał zainwestowany <= 0 ({average:N0})"));
         }
 
-        if (quarters.At(periodIndex)?.TotalAssets is { } assets && average < assets * CapitalFloorShareOfAssets)
+        if (quarters[periodIndex].TotalAssets is { } assets && average < assets * CapitalFloorShareOfAssets)
         {
             return Measured<double>.Unreliable(
                 string.Create(CultureInfo.InvariantCulture, $"średni kapitał {average:N0} < 10% sumy bilansowej"));

@@ -1,3 +1,4 @@
+using StockInsight.Features.Common;
 using StockInsight.Features.Common.Endpoints;
 using StockInsight.Features.Common.Handlers;
 using StockInsight.Features.Common.Jobs;
@@ -15,8 +16,11 @@ public static class DependencyInjection
         var assembly = typeof(DependencyInjection).Assembly;
 
         services.AddEndpoints(assembly);
-        services.AddHandlers(assembly);
-        services.AddJobs(assembly);
+        foreach (var type in assembly.ConcreteTypesOf<IHandler>().Concat(assembly.ConcreteTypesOf<IJob>()))
+        {
+            services.TryAddScoped(type);
+        }
+
         services.TryAddScoped<DecisionUniverseLoader>();
 
         return services;
