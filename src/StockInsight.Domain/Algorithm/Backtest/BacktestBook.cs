@@ -1,11 +1,9 @@
+using StockInsight.Domain.Algorithm.Backtest.Enums;
 using StockInsight.Domain.Algorithm.Backtest.Models;
 using StockInsight.Domain.Algorithm.Backtest.Performance.Models;
 using StockInsight.Domain.Algorithm.Decisions.Gate.Enums;
 using StockInsight.Domain.Algorithm.Strategy;
 using StockInsight.Domain.Algorithm.Strategy.Models;
-using StockInsight.Domain.Algorithm.Strategy.Ranking.Models;
-using StockInsight.Domain.Algorithm.Strategy.Trades;
-using StockInsight.Domain.Algorithm.Strategy.Trades.Enums;
 
 namespace StockInsight.Domain.Algorithm.Backtest;
 

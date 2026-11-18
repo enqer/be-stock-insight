@@ -9,7 +9,6 @@ public static class SnapshotStep
         IReadOnlyList<AcceptedCompany> universe,
         DateOnly decisionDate,
         StrategyRules rules,
-        IReadOnlyDictionary<string, double> lastKnownCloses,
         DatePricing pricing)
     {
         var state = new OrderedDictionary<string, CompanyState>(StringComparer.Ordinal);
@@ -20,8 +19,7 @@ public static class SnapshotStep
                 continue;
             }
 
-            var hasEntryPrice = lastKnownCloses.ContainsKey(company.Ticker) && pricing.HasEntryPrice(company.Ticker, rules.MaxEntryPriceAgeDays);
-            state.Add(company.Ticker, new CompanyState(company, latest, hasEntryPrice));
+            state.Add(company.Ticker, new CompanyState(company.Ticker, latest, pricing.HasEntryPrice(company.Ticker, rules.MaxEntryPriceAgeDays)));
         }
 
         return new MarketSnapshot(state);

@@ -10,22 +10,13 @@ public static class StrategyDay
     public static StrategyDayResult Run(
         IReadOnlyList<AcceptedCompany> universe,
         IReadOnlyDictionary<string, PriceSeries> prices,
-        Dictionary<string, double> lastKnownCloses,
         IStrategyBook book,
         StrategyRules rules,
         DateOnly decisionDate,
         DateOnly? executionSession = null)
     {
-        foreach (var company in universe)
-        {
-            if (prices[company.Ticker].LastOnOrBefore(decisionDate) is { } last)
-            {
-                lastKnownCloses[company.Ticker] = last.Close;
-            }
-        }
-
-        var pricing = new DatePricing(decisionDate, prices, lastKnownCloses, executionSession);
-        var snapshot = SnapshotStep.Run(universe, decisionDate, rules, lastKnownCloses, pricing);
+        var pricing = new DatePricing(decisionDate, prices, executionSession);
+        var snapshot = SnapshotStep.Run(universe, decisionDate, rules, pricing);
 
         var tradeDate = executionSession ?? decisionDate;
         ExitStep.Run(book, snapshot, pricing, tradeDate);

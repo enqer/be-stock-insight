@@ -5,20 +5,28 @@ namespace StockInsight.Domain.Algorithm.Strategy;
 public sealed class DatePricing(
     DateOnly decisionDate,
     IReadOnlyDictionary<string, PriceSeries> prices,
-    IReadOnlyDictionary<string, double> lastKnownCloses,
     DateOnly? executionSession = null)
 {
     public double? TradePrice(string ticker) =>
         executionSession is { } session
             ? SessionClose(ticker, session)
-            : prices[ticker].FirstOnOrAfter(decisionDate)?.Close ?? (lastKnownCloses.TryGetValue(ticker, out var known) ? known : null);
+            : prices[ticker].FirstOnOrAfter(decisionDate)?.Close ?? LastClose(ticker);
 
-    public bool HasEntryPrice(string ticker, int maxPriceAgeDays) =>
-        executionSession is { } session
+    public bool HasEntryPrice(string ticker, int maxPriceAgeDays)
+    {
+        if (prices[ticker].LastOnOrBefore(decisionDate) is not { } last)
+        {
+            return false;
+        }
+
+        return executionSession is { } session
             ? SessionClose(ticker, session) is not null
-            : prices[ticker].LastOnOrBefore(decisionDate) is { } last && decisionDate.DayNumber - last.Date.DayNumber <= maxPriceAgeDays;
+            : decisionDate.DayNumber - last.Date.DayNumber <= maxPriceAgeDays;
+    }
 
-    public double ValuationPrice(string ticker) => lastKnownCloses.GetValueOrDefault(ticker, 0.0);
+    public double ValuationPrice(string ticker) => LastClose(ticker) ?? 0.0;
+
+    private double? LastClose(string ticker) => prices[ticker].LastOnOrBefore(decisionDate)?.Close;
 
     private double? SessionClose(string ticker, DateOnly session) =>
         prices[ticker].FirstOnOrAfter(session) is { } point && point.Date == session ? point.Close : null;

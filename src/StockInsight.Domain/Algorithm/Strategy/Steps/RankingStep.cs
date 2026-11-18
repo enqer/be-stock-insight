@@ -11,11 +11,10 @@ public static class RankingStep
     public static IReadOnlyList<RankedCandidate>? Run(MarketSnapshot snapshot, IStrategyBook book, StrategyRules rules)
     {
         var candidates = snapshot.Companies
-            .Where(x => !book.Holds(x.Company.Ticker)
+            .Where(x => !book.Holds(x.Ticker)
                         && x.HasEntryPrice
                         && EntryGate.Evaluate(x.LatestDecision).Passed)
-            .Select(x => QualityComponents.From(x.LatestDecision) is { } components ? new RankingCandidate(x.Company.Ticker, components) : null)
-            .OfType<RankingCandidate>()
+            .Select(x => new RankingCandidate(x.Ticker, QualityComponents.From(x.LatestDecision)!))
             .ToList();
 
         return candidates.Count >= rules.MinCandidates ? QualityRanking.Rank(candidates) : null;

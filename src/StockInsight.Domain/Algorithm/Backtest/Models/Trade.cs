@@ -1,6 +1,6 @@
+using StockInsight.Domain.Algorithm.Backtest.Enums;
 using StockInsight.Domain.Algorithm.Decisions.Gate.Enums;
-using StockInsight.Domain.Algorithm.Strategy.Trades.Enums;
 
-namespace StockInsight.Domain.Algorithm.Strategy.Trades;
+namespace StockInsight.Domain.Algorithm.Backtest.Models;
 
 public sealed record Trade(DateOnly Date, TradeSide Side, string Ticker, double Price, GateReason? ExitReason);

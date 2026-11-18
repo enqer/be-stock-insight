@@ -2,7 +2,6 @@ using StockInsight.Domain.Algorithm.Backtest.Models;
 using StockInsight.Domain.Algorithm.Decisions.Pipeline.Models;
 using StockInsight.Domain.Algorithm.Strategy;
 using StockInsight.Domain.Algorithm.Strategy.Models;
-using StockInsight.Domain.Algorithm.Strategy.Ranking.Models;
 
 namespace StockInsight.Domain.Algorithm.Backtest;
 
@@ -17,11 +16,10 @@ public static class BacktestPipeline
 
         var prices = universe.ToDictionary(x => x.Ticker, x => x.Prices, StringComparer.Ordinal);
         var book = new BacktestBook(rules, dates[0]);
-        var lastKnownCloses = new Dictionary<string, double>(StringComparer.Ordinal);
 
         foreach (var date in dates)
         {
-            var day = StrategyDay.Run(universe, prices, lastKnownCloses, book, rules, date);
+            var day = StrategyDay.Run(universe, prices, book, rules, date);
             if (day.Ranked is { } ranked)
             {
                 book.RecordRanking(new RankingSnapshot(date, ranked));

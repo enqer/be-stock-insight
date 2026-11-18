@@ -1,6 +1,4 @@
 using StockInsight.Domain.Algorithm.Backtest.Performance.Models;
-using StockInsight.Domain.Algorithm.Strategy.Ranking.Models;
-using StockInsight.Domain.Algorithm.Strategy.Trades;
 
 namespace StockInsight.Domain.Algorithm.Backtest.Models;
 

@@ -1,6 +1,7 @@
+using StockInsight.Domain.Algorithm.Backtest.Performance.Models;
 using StockInsight.Domain.Algorithm.Calculations.Numerics;
 
-namespace StockInsight.Domain.Algorithm.Backtest.Performance.Models;
+namespace StockInsight.Domain.Algorithm.Backtest.Performance;
 
 public sealed record PerformanceStatistics(
     double? Cagr,
