@@ -48,7 +48,7 @@ public class FinancialProvider(IOptions<FinancialProviderOptions> options, Playw
 
                 if (!date) {
                   const cells = [...tr.querySelectorAll('td,th')].map(td => td.textContent.trim());
-                  throw new Error(`Missing lastet update date for ${name}: ${JSON.stringify(cells)}`);
+                  throw new Error(`Missing latest update date for ${name}: ${JSON.stringify(cells)}`);
                 }
 
                 out.push({ slug: name, lastFinancialUpdate: date });
