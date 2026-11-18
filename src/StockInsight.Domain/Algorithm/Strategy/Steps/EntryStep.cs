@@ -7,10 +7,10 @@ public static class EntryStep
 {
     public static void Run(IStrategyBook book, IReadOnlyList<RankedCandidate> ranked, int freeSlots, DatePricing pricing, StrategyRules rules, DateOnly tradeDate)
     {
-        var perPosition = book.Value(pricing) / rules.TargetPositions;
+        var targetPositionValue = book.Value(pricing) / rules.TargetPositions;
         foreach (var chosen in ranked.Take(freeSlots))
         {
-            if (book.Cash < perPosition * rules.MinCashShareOfPosition)
+            if (book.Cash < targetPositionValue * rules.MinCashShareOfPosition)
             {
                 break;
             }
@@ -20,7 +20,7 @@ public static class EntryStep
                 continue;
             }
 
-            book.Buy(tradeDate, chosen.Ticker, Math.Min(perPosition, book.Cash), price);
+            book.Buy(tradeDate, chosen.Ticker, Math.Min(targetPositionValue, book.Cash), price);
         }
     }
 }

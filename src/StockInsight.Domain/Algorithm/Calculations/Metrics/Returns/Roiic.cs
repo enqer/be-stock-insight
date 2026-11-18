@@ -15,15 +15,17 @@ public static class Roiic
 
     public static Measured<double> At(IReadOnlyList<Quarter> quarters, int periodIndex, int lagQuarters, bool minoritiesInsideEquity)
     {
-        if (periodIndex - lagQuarters < 3)
+        var baseIndex = periodIndex - lagQuarters;
+        var baseHasTrailingYear = baseIndex >= TrailingTwelveMonths.Quarters - 1;
+        if (!baseHasTrailingYear)
         {
-            return Measured<double>.Missing(string.Create(CultureInfo.InvariantCulture, $"potrzebne {lagQuarters + 4} kwartały historii"));
+            return Measured<double>.Missing(string.Create(CultureInfo.InvariantCulture, $"potrzebne {lagQuarters + TrailingTwelveMonths.Quarters} kwartały historii"));
         }
 
         if (Nopat(quarters, periodIndex) is not { } nopatNow
-            || Nopat(quarters, periodIndex - lagQuarters) is not { } nopatBase
+            || Nopat(quarters, baseIndex) is not { } nopatBase
             || InvestedCapital.At(quarters, periodIndex, minoritiesInsideEquity).Value is not { } capitalNow
-            || InvestedCapital.At(quarters, periodIndex - lagQuarters, minoritiesInsideEquity).Value is not { } capitalBase)
+            || InvestedCapital.At(quarters, baseIndex, minoritiesInsideEquity).Value is not { } capitalBase)
         {
             return Measured<double>.Missing("luka w szeregu");
         }

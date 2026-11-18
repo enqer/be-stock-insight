@@ -28,31 +28,25 @@ public static class ShareSplits
             }
 
             var ratio = now / before;
-            if (ratio is <= UpperJump and >= LowerJump)
+            var ordinaryChange = ratio is <= UpperJump and >= LowerJump;
+            if (ordinaryChange)
             {
                 continue;
             }
 
-            var issued = quarters[i].ShareIssue ?? 0.0;
-            var capitalGrew = false;
-            var capitalProportional = false;
-            if (quarters[i].ShareCapital is { } capitalNow
-                && quarters[i - 1].ShareCapital is { } capitalBefore && capitalBefore != 0)
-            {
-                var capitalRatio = capitalNow / capitalBefore;
-                capitalGrew = capitalRatio > CapitalGrowthThreshold;
-                capitalProportional = Math.Abs(capitalRatio / ratio - 1) < ProportionTolerance;
-            }
-
+            var noSharesIssued = (quarters[i].ShareIssue ?? 0.0) == 0;
+            var (capitalGrew, capitalProportional) = ShareCapitalChange(quarters[i - 1], quarters[i], ratio);
             var integerMultiple = IsIntegerMultiple(ratio) || IsIntegerMultiple(1 / ratio);
 
-            if (issued == 0 && integerMultiple && capitalGrew && !capitalProportional)
+            var compositeOperation = noSharesIssued && integerMultiple && capitalGrew && !capitalProportional;
+            if (compositeOperation)
             {
                 unifiedFromIndex = Math.Max(unifiedFromIndex, i);
                 continue;
             }
 
-            if (issued == 0 && (!capitalGrew || capitalProportional))
+            var splitOrBonusIssue = noSharesIssued && (!capitalGrew || capitalProportional);
+            if (splitOrBonusIssue)
             {
                 for (var earlier = 0; earlier < i; earlier++)
                 {
@@ -64,6 +58,19 @@ public static class ShareSplits
         var adjusted = shares.Select((x, i) => x is { } count && count != 0 ? count * splitFactors[i] : (double?)null).ToArray();
         var bases = Enumerable.Range(0, quarterCount).Select(x => x < unifiedFromIndex ? ShareBase.Ambiguous : ShareBase.Unified).ToArray();
         return new ShareHistory(adjusted, bases);
+    }
+
+    private static (bool Grew, bool Proportional) ShareCapitalChange(Quarter before, Quarter now, double shareRatio)
+    {
+        if (now.ShareCapital is not { } capitalNow || before.ShareCapital is not { } capitalBefore || capitalBefore == 0)
+        {
+            return (false, false);
+        }
+
+        var capitalRatio = capitalNow / capitalBefore;
+        var grew = capitalRatio > CapitalGrowthThreshold;
+        var proportional = Math.Abs(capitalRatio / shareRatio - 1) < ProportionTolerance;
+        return (grew, proportional);
     }
 
     private static bool IsIntegerMultiple(double ratio) =>

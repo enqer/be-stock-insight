@@ -11,7 +11,7 @@ public static class FirstGapQuarantineRule
     {
         if (gapDays[0] <= FirstGapMultiple * medianGap)
         {
-            return new FirstGapQuarantine(reports, null, null);
+            return new FirstGapQuarantine(reports, QuarantinedPeriod: null, Reason: null);
         }
 
         var first = reports[0];

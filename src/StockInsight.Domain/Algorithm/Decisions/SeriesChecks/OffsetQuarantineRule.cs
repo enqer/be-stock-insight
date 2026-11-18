@@ -11,7 +11,7 @@ public static class OffsetQuarantineRule
 
     public static OffsetQuarantine Apply(IReadOnlyList<ScheduledReport> reports)
     {
-        var noPeriods = new HashSet<string>(StringComparer.Ordinal);
+        var noQuarantinedPeriods = new HashSet<string>(StringComparer.Ordinal);
 
         var offsets = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var report in reports)
@@ -21,7 +21,7 @@ public static class OffsetQuarantineRule
 
         if (offsets.Count < SeriesQuality.MinPeriods)
         {
-            return new OffsetQuarantine(reports, noPeriods, null);
+            return new OffsetQuarantine(reports, noQuarantinedPeriods, Reason: null);
         }
 
         var medianOffset = Statistics.Median([.. offsets.Values.Select(x => (double)x)]);
@@ -31,7 +31,7 @@ public static class OffsetQuarantineRule
             .ToHashSet(StringComparer.Ordinal);
         if (suspectPeriods.Count == 0)
         {
-            return new OffsetQuarantine(reports, noPeriods, null);
+            return new OffsetQuarantine(reports, noQuarantinedPeriods, Reason: null);
         }
 
         return new OffsetQuarantine(

@@ -10,14 +10,19 @@ public static class CycleLength
     public const int MinYears = 3;
     public const int MaxYears = 8;
     private const int MinObservations = 20;
+    private const int WindowQuarters = 48;
+    private const int EarliestWindowStartIndex = 8;
+    private const int MinLagQuarters = 4;
+    private const int MaxLagQuarters = 20;
 
     public static int Years(IReadOnlyList<Quarter> quarters, int periodIndex)
     {
         var revenueGrowth = new List<double>();
-        for (var periodInWindow = Math.Max(8, periodIndex - 47); periodInWindow <= periodIndex; periodInWindow++)
+        var windowStart = Math.Max(EarliestWindowStartIndex, periodIndex - (WindowQuarters - 1));
+        for (var periodInWindow = windowStart; periodInWindow <= periodIndex; periodInWindow++)
         {
             if (TrailingTwelveMonths.Sum(quarters, periodInWindow, x => x.Revenue) is { } now
-                && TrailingTwelveMonths.Sum(quarters, periodInWindow - 4, x => x.Revenue) is { } before && before > 0)
+                && TrailingTwelveMonths.Sum(quarters, periodInWindow - TrailingTwelveMonths.Quarters, x => x.Revenue) is { } before && before > 0)
             {
                 revenueGrowth.Add(now / before - 1);
             }
@@ -31,29 +36,9 @@ public static class CycleLength
         var mean = Statistics.SumInOrder(revenueGrowth) / revenueGrowth.Count;
         var mostNegativeCorrelation = 0.0;
         int? halfCycleLag = null;
-        for (var lag = 4; lag < Math.Min(21, revenueGrowth.Count / 2); lag++)
+        for (var lag = MinLagQuarters; lag <= MaxLagQuarters && lag < revenueGrowth.Count / 2; lag++)
         {
-            var squaresNow = 0.0;
-            var squaresLagged = 0.0;
-            var crossProducts = 0.0;
-            for (var index = 0; index < revenueGrowth.Count - lag; index++)
-            {
-                var deviationNow = revenueGrowth[index] - mean;
-                var deviationLagged = revenueGrowth[index + lag] - mean;
-                squaresNow += deviationNow * deviationNow;
-                squaresLagged += deviationLagged * deviationLagged;
-                crossProducts += deviationNow * deviationLagged;
-            }
-
-            var spreadNow = Math.Sqrt(squaresNow);
-            var spreadLagged = Math.Sqrt(squaresLagged);
-            if (spreadNow == 0 || spreadLagged == 0)
-            {
-                continue;
-            }
-
-            var correlation = crossProducts / (spreadNow * spreadLagged);
-            if (correlation < mostNegativeCorrelation)
+            if (LaggedCorrelation(revenueGrowth, mean, lag) is { } correlation && correlation < mostNegativeCorrelation)
             {
                 mostNegativeCorrelation = correlation;
                 halfCycleLag = lag;
@@ -65,7 +50,32 @@ public static class CycleLength
             return FallbackYears;
         }
 
-        var years = (int)Math.Round(2.0 * halfCycle / 4.0, MidpointRounding.ToEven);
+        var cycleQuarters = 2.0 * halfCycle;
+        var years = (int)Math.Round(cycleQuarters / TrailingTwelveMonths.Quarters, MidpointRounding.ToEven);
         return Math.Clamp(years, MinYears, MaxYears);
+    }
+
+    private static double? LaggedCorrelation(IReadOnlyList<double> growth, double mean, int lag)
+    {
+        var squaresNow = 0.0;
+        var squaresLagged = 0.0;
+        var crossProducts = 0.0;
+        for (var index = 0; index < growth.Count - lag; index++)
+        {
+            var deviationNow = growth[index] - mean;
+            var deviationLagged = growth[index + lag] - mean;
+            squaresNow += deviationNow * deviationNow;
+            squaresLagged += deviationLagged * deviationLagged;
+            crossProducts += deviationNow * deviationLagged;
+        }
+
+        var spreadNow = Math.Sqrt(squaresNow);
+        var spreadLagged = Math.Sqrt(squaresLagged);
+        if (spreadNow == 0 || spreadLagged == 0)
+        {
+            return null;
+        }
+
+        return crossProducts / (spreadNow * spreadLagged);
     }
 }

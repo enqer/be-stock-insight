@@ -10,12 +10,11 @@ public static class Debt
     public static DebtValue At(IReadOnlyList<Quarter> quarters, int periodIndex)
     {
         var quarter = quarters[periodIndex];
-        var parts = new[] { quarter.LongTermBorrowings, quarter.ShortTermBorrowings, quarter.LongTermLeaseLiabilities, quarter.ShortTermLeaseLiabilities, quarter.LongTermBonds, quarter.ShortTermBonds }.OfType<double>().ToList();
-        var breakdown = Statistics.SumInOrder(parts);
-
-        if (breakdown > 0)
+        var reportedParts = ReportedDebtParts(quarter);
+        var breakdownTotal = Statistics.SumInOrder(reportedParts);
+        if (breakdownTotal > 0)
         {
-            return new DebtValue(breakdown, DebtSource.Breakdown);
+            return new DebtValue(breakdownTotal, DebtSource.Breakdown);
         }
 
         if (quarter.NonCurrentLiabilities is { } nonCurrentLiabilities && nonCurrentLiabilities > 0)
@@ -23,8 +22,25 @@ public static class Debt
             return new DebtValue(nonCurrentLiabilities, DebtSource.Aggregate);
         }
 
-        return parts.Count > 0
-            ? new DebtValue(breakdown, DebtSource.Breakdown)
-            : new DebtValue(0.0, DebtSource.None);
+        var breakdownReportedButNotPositive = reportedParts.Count > 0;
+        if (breakdownReportedButNotPositive)
+        {
+            return new DebtValue(breakdownTotal, DebtSource.Breakdown);
+        }
+
+        return new DebtValue(0.0, DebtSource.None);
     }
+
+    private static List<double> ReportedDebtParts(Quarter quarter) =>
+    [
+        .. new[]
+        {
+            quarter.LongTermBorrowings,
+            quarter.ShortTermBorrowings,
+            quarter.LongTermLeaseLiabilities,
+            quarter.ShortTermLeaseLiabilities,
+            quarter.LongTermBonds,
+            quarter.ShortTermBonds,
+        }.OfType<double>(),
+    ];
 }

@@ -8,32 +8,37 @@ public static class MinorityInterests
 
     public static bool AreInsideEquity(IReadOnlyList<Quarter> quarters)
     {
-        var inside = 0;
-        var outside = 0;
+        var quartersBalancedWithMinoritiesInEquity = 0;
+        var quartersBalancedWithMinoritiesSeparate = 0;
         foreach (var quarter in quarters)
         {
             if (quarter.TotalAssets is not { } assets
                 || quarter.Equity is not { } equity
-                || quarter.MinorityInterests is not { } minorities || minorities == 0
+                || quarter.MinorityInterests is not { } minorities
                 || quarter.NonCurrentLiabilities is not { } nonCurrentLiabilities
                 || quarter.CurrentLiabilities is not { } currentLiabilities)
             {
                 continue;
             }
 
-            var withoutMinorities = equity + nonCurrentLiabilities + currentLiabilities;
-            var tolerance = Math.Max(1.0, Math.Abs(assets) * RelativeTolerance);
-            if (Math.Abs(withoutMinorities - assets) <= tolerance)
+            if (minorities == 0)
             {
-                inside++;
+                continue;
             }
-            else if (Math.Abs(withoutMinorities + minorities - assets) <= tolerance)
+
+            var liabilitiesAndEquity = equity + nonCurrentLiabilities + currentLiabilities;
+            var tolerance = Math.Max(1.0, Math.Abs(assets) * RelativeTolerance);
+            if (Math.Abs(liabilitiesAndEquity - assets) <= tolerance)
             {
-                outside++;
+                quartersBalancedWithMinoritiesInEquity++;
+            }
+            else if (Math.Abs(liabilitiesAndEquity + minorities - assets) <= tolerance)
+            {
+                quartersBalancedWithMinoritiesSeparate++;
             }
         }
 
-        return inside > outside;
+        return quartersBalancedWithMinoritiesInEquity > quartersBalancedWithMinoritiesSeparate;
     }
 
     public static double At(IReadOnlyList<Quarter> quarters, int periodIndex, bool insideEquity) =>

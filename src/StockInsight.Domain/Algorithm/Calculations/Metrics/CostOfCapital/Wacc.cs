@@ -17,19 +17,18 @@ public static class Wacc
     public static WaccValue? At(IReadOnlyList<Quarter> quarters, int periodIndex, double riskFreeRate, double unleveredBeta)
     {
         var revenue = TrailingTwelveMonths.Sum(quarters, periodIndex, x => x.Revenue);
-        var debt = Debt.At(quarters, periodIndex).Amount;
-        var debtYearAgo = Debt.At(quarters, Math.Max(0, periodIndex - 4)).Amount;
-
         if (quarters[periodIndex].Equity is not { } equity || equity <= 0 || revenue is null)
         {
             return null;
         }
 
-        var financeCost = TrailingTwelveMonths.Sum(quarters, periodIndex, x => x.FinancialExpenses);
-        var impliedCostOfDebt = SignificantRatio.Of(
-            Math.Abs(financeCost ?? 0.0), (debt + debtYearAgo) / 2, revenue, DebtSignificanceShareOfRevenue);
-        var costOfDebt = impliedCostOfDebt is { } statementCostOfDebt && statementCostOfDebt > MinPlausibleCostOfDebt && statementCostOfDebt < MaxPlausibleCostOfDebt
-            ? statementCostOfDebt
+        var debt = Debt.At(quarters, periodIndex).Amount;
+        var debtYearAgo = Debt.At(quarters, Math.Max(0, periodIndex - TrailingTwelveMonths.Quarters)).Amount;
+        var averageDebt = (debt + debtYearAgo) / 2;
+        var financeCost = Math.Abs(TrailingTwelveMonths.Sum(quarters, periodIndex, x => x.FinancialExpenses) ?? 0.0);
+        var statementCostOfDebt = SignificantRatio.Of(financeCost, averageDebt, revenue, DebtSignificanceShareOfRevenue);
+        var costOfDebt = statementCostOfDebt is { } rate && IsPlausibleCostOfDebt(rate)
+            ? rate
             : riskFreeRate + HypotheticalDebtSpread;
 
         var debtToEquity = debt / equity;
@@ -40,4 +39,6 @@ public static class Wacc
         var wacc = (1 - debtWeight) * costOfEquity + debtWeight * costOfDebt * (1 - MarketConstants.TaxRate);
         return new WaccValue(wacc, new WaccComponents(costOfEquity, costOfDebt, leveredBeta, debtToEquity, debtWeight));
     }
+
+    private static bool IsPlausibleCostOfDebt(double rate) => rate > MinPlausibleCostOfDebt && rate < MaxPlausibleCostOfDebt;
 }

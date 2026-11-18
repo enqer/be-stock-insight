@@ -11,6 +11,7 @@ public static class Beta
     public const double Ceiling = 2.5;
 
     public const double Fallback = 1.0;
+    public const double TaxShield = 1 - MarketConstants.TaxRate;
 
     public static double? Regression(PriceSeries companyPrices, PriceSeries indexPrices, DateOnly asOf)
     {
@@ -29,30 +30,34 @@ public static class Beta
 
         var companyReturns = new double[months.Length - 1];
         var indexReturns = new double[months.Length - 1];
-        for (var month = 1; month < months.Length; month++)
+        for (var i = 1; i < months.Length; i++)
         {
-            companyReturns[month - 1] = companyCloses[months[month]] / companyCloses[months[month - 1]] - 1;
-            indexReturns[month - 1] = indexCloses[months[month]] / indexCloses[months[month - 1]] - 1;
+            companyReturns[i - 1] = companyCloses[months[i]] / companyCloses[months[i - 1]] - 1;
+            indexReturns[i - 1] = indexCloses[months[i]] / indexCloses[months[i - 1]] - 1;
         }
 
         var meanIndexReturn = Statistics.SumInOrder(indexReturns) / indexReturns.Length;
         var meanCompanyReturn = Statistics.SumInOrder(companyReturns) / companyReturns.Length;
         var variance = 0.0;
         var covariance = 0.0;
-        for (var month = 0; month < indexReturns.Length; month++)
+        for (var i = 0; i < indexReturns.Length; i++)
         {
-            variance += (indexReturns[month] - meanIndexReturn) * (indexReturns[month] - meanIndexReturn);
-            covariance += (companyReturns[month] - meanCompanyReturn) * (indexReturns[month] - meanIndexReturn);
+            variance += (indexReturns[i] - meanIndexReturn) * (indexReturns[i] - meanIndexReturn);
+            covariance += (companyReturns[i] - meanCompanyReturn) * (indexReturns[i] - meanIndexReturn);
         }
 
         return variance <= 0 ? null : covariance / variance;
     }
 
-    public static double Unlever(double levered, double windowLeverage) =>
-        Math.Clamp(levered / (1 + (1 - MarketConstants.TaxRate) * Math.Max(0.0, windowLeverage)), Floor, Ceiling);
+    public static double Unlever(double levered, double windowLeverage)
+    {
+        var leverageNotBelowZero = Math.Max(0.0, windowLeverage);
+        var unlevered = levered / (1 + TaxShield * leverageNotBelowZero);
+        return Math.Clamp(unlevered, Floor, Ceiling);
+    }
 
     public static double Relever(double unlevered, double currentLeverage) =>
-        unlevered * (1 + (1 - MarketConstants.TaxRate) * currentLeverage);
+        unlevered * (1 + TaxShield * currentLeverage);
 
     private static Dictionary<(int Year, int Month), double> LastCloseOfMonth(PriceSeries series, DateOnly asOf)
     {

@@ -15,7 +15,9 @@ public static class DecisionMeasuresStep
         {
             var period = periodsByPublication[position];
             var fourDecisionsEarlier = periodsByPublication[Math.Max(0, position - 4)];
+            var decisionDate = period.PublicationDate;
             var capital = CapitalMeasures.At(quarters, period.PeriodIndex, prepared.MinoritiesInsideEquity);
+            var averageCapitalIfCurrentPositive = capital.InvestedCapital > 0 ? capital.AverageInvestedCapital : null;
 
             series.Add(new DecisionPoint
             {
@@ -23,9 +25,9 @@ public static class DecisionMeasuresStep
                 PeriodEnd = period.PeriodEnd,
                 PublicationDate = period.PublicationDate,
                 PeriodIndex = period.PeriodIndex,
-                Returns = ReturnMeasures.At(quarters, period, capital.InvestedCapital > 0 ? capital.AverageInvestedCapital : null),
+                Returns = ReturnMeasures.At(quarters, period, averageCapitalIfCurrentPositive),
                 Capital = capital,
-                CostOfCapital = CostOfCapitalMeasures.At(quarters, period.PeriodIndex, period.PublicationDate, prices, indexPrices, riskFreeRate),
+                CostOfCapital = CostOfCapitalMeasures.At(quarters, period.PeriodIndex, decisionDate, prices, indexPrices, riskFreeRate),
                 Earnings = EarningsMeasures.At(quarters, period),
                 Quality = QualityMeasures.At(quarters, prepared.MinoritiesInsideEquity, period, fourDecisionsEarlier),
             });

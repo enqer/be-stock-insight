@@ -36,7 +36,7 @@ public sealed record PerformanceStatistics(
             drawdown = Math.Min(drawdown, point.Value / peak - 1);
         }
 
-        var returns = curve.Skip(1).Select((x, i) => x.Value / curve[i].Value - 1).ToList();
+        var returns = curve.Zip(curve.Skip(1)).Select(x => x.Second.Value / x.First.Value - 1).ToList();
 
         return new PerformanceStatistics(
             cagr,

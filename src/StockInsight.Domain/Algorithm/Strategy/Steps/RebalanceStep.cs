@@ -11,7 +11,7 @@ public static class RebalanceStep
             return;
         }
 
-        var targetValue = book.Value(pricing) / rules.TargetPositions;
+        var targetPositionValue = book.Value(pricing) / rules.TargetPositions;
         foreach (var ticker in book.HeldTickers)
         {
             if (pricing.TradePrice(ticker) is not { } price)
@@ -20,13 +20,13 @@ public static class RebalanceStep
             }
 
             var heldValue = book.Units(ticker) * price;
-            if (heldValue > targetValue * rules.RebalanceUpperBand)
+            if (heldValue > targetPositionValue * rules.RebalanceUpperBand)
             {
-                book.TrimTo(tradeDate, ticker, targetValue, price);
+                book.TrimTo(tradeDate, ticker, targetPositionValue, price);
             }
-            else if (heldValue < targetValue * rules.RebalanceLowerBand && book.Cash > 0)
+            else if (heldValue < targetPositionValue * rules.RebalanceLowerBand && book.Cash > 0)
             {
-                book.TopUpTo(tradeDate, ticker, targetValue, price);
+                book.TopUpTo(tradeDate, ticker, targetPositionValue, price);
             }
         }
     }

@@ -32,10 +32,10 @@ public static class CompanyPipeline
         series = QuarantineStep.Run(series, quality.Value);
         series = ContinuityCutStep.Run(series, quality.Value);
 
-        var enough = MinDecisionsStep.Run(series);
-        return enough.Rejection is { } tooFew
+        var decisions = MinDecisionsStep.Run(series);
+        return decisions.Rejection is { } tooFew
             ? Reject(ticker, tooFew)
-            : new AcceptedCompany(ticker, enough.Value, inputs.Prices);
+            : new AcceptedCompany(ticker, decisions.Value, inputs.Prices);
     }
 
     public static IReadOnlyList<DecisionPoint> BuildSeries(IReadOnlyList<Quarter> quarters, PriceSeries prices, PriceSeries indexPrices, RiskFreeRate riskFreeRate)

@@ -1,6 +1,7 @@
 using StockInsight.Domain.Algorithm.Calculations.Inputs.Statements.Models;
 using StockInsight.Domain.Algorithm.Calculations.Metrics.Returns;
 using StockInsight.Domain.Algorithm.Decisions.Pipeline.Models;
+using NormalisedRoicMetric = StockInsight.Domain.Algorithm.Calculations.Metrics.Returns.NormalisedRoic;
 
 namespace StockInsight.Domain.Algorithm.Decisions.Measures;
 
@@ -16,7 +17,7 @@ public sealed record ReturnMeasures(
         return new ReturnMeasures(
             period.Roic,
             period.Roiic,
-            StockInsight.Domain.Algorithm.Calculations.Metrics.Returns.NormalisedRoic.At(quarters, period.PeriodIndex, cycleYears, averageCapital).OkValue,
+            NormalisedRoicMetric.At(quarters, period.PeriodIndex, cycleYears, averageCapital).OkValue,
             cycleYears);
     }
 }

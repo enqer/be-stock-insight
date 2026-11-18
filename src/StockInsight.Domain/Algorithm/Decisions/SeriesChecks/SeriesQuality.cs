@@ -23,7 +23,7 @@ public static class SeriesQuality
             if (reports.Count < MinPeriods)
             {
                 reasons.Add(string.Create(CultureInfo.InvariantCulture, $"po kwarantannie zostało {reports.Count} okresów"));
-                return new SeriesQualityResult(false, reasons, quarantine, null);
+                return new SeriesQualityResult(Applicable: false, reasons, quarantine, ContinuousFromPeriod: null);
             }
         }
 
@@ -32,20 +32,20 @@ public static class SeriesQuality
         if (cadence.Rejection is { } irregular)
         {
             reasons.Add(irregular);
-            return new SeriesQualityResult(false, reasons, quarantine, null);
+            return new SeriesQualityResult(Applicable: false, reasons, quarantine, ContinuousFromPeriod: null);
         }
 
         var firstGapQuarantine = FirstGapQuarantineRule.Apply(reports, gapDays, cadence.MedianGapDays!.Value);
-        if (firstGapQuarantine.QuarantinedPeriod is { } misdated)
+        if (firstGapQuarantine is { QuarantinedPeriod: { } misdated, Reason: { } misdatedReason })
         {
             quarantine.Add(misdated);
-            reasons.Add(firstGapQuarantine.Reason!);
+            reasons.Add(misdatedReason);
             reports = firstGapQuarantine.Remaining;
             gapDays = PublicationSchedule.GapDays(reports);
             if (gapDays.Count == 0)
             {
                 reasons.Add("po kwarantannie brak szeregu");
-                return new SeriesQualityResult(false, reasons, quarantine, null);
+                return new SeriesQualityResult(Applicable: false, reasons, quarantine, ContinuousFromPeriod: null);
             }
         }
 

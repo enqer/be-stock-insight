@@ -29,9 +29,9 @@ public static class BetaReleveringIdentity
             }
 
             var components = wacc.Components;
-            const double shield = 1 - MarketConstants.TaxRate;
+            const double taxShield = 1 - MarketConstants.TaxRate;
             var windowLeverage = point.CostOfCapital.WindowLeverage;
-            var expected = betaRegression * (1 + shield * components.DebtToEquity) / (1 + shield * windowLeverage);
+            var expected = betaRegression * (1 + taxShield * components.DebtToEquity) / (1 + taxShield * windowLeverage);
             tally.FailIf(IdentityCheck.Differs(expected, components.LeveredBeta, RelativeTolerance), () => string.Create(CultureInfo.InvariantCulture, 
                     $"{ticker} {point.PeriodLabel}: beta {components.LeveredBeta:F6} vs oczekiwana {expected:F6} (de={components.DebtToEquity:F3}, de_okno={windowLeverage:F3})"));
         }

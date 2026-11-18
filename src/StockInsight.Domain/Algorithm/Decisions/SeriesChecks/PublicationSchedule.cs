@@ -15,5 +15,5 @@ public static class PublicationSchedule
         ];
 
     public static IReadOnlyList<double> GapDays(IReadOnlyList<ScheduledReport> reports) =>
-        [.. reports.Skip(1).Select((x, i) => (double)(x.PublicationDate.DayNumber - reports[i].PublicationDate.DayNumber))];
+        [.. reports.Zip(reports.Skip(1)).Select(x => (double)(x.Second.PublicationDate.DayNumber - x.First.PublicationDate.DayNumber))];
 }

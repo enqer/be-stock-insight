@@ -9,18 +9,12 @@ public static class DirectionTest
 
     public static int? CriteriaMet(IReadOnlyList<Quarter> quarters, int periodIndex)
     {
+        var yearEarlier = periodIndex - TrailingTwelveMonths.Quarters;
         var revenueNow = TrailingTwelveMonths.Sum(quarters, periodIndex, x => x.Revenue);
-        var revenueBefore = TrailingTwelveMonths.Sum(quarters, periodIndex - 4, x => x.Revenue);
+        var revenueBefore = TrailingTwelveMonths.Sum(quarters, yearEarlier, x => x.Revenue);
         var incomeNow = ContinuingNetIncome(quarters, periodIndex);
-        var incomeBefore = ContinuingNetIncome(quarters, periodIndex - 4);
-
-        var profitNow = TrailingTwelveMonths.Sum(quarters, periodIndex, x => x.GrossProfitOnSales);
-        var profitBefore = TrailingTwelveMonths.Sum(quarters, periodIndex - 4, x => x.GrossProfitOnSales);
-        if (profitNow is null || profitBefore is null)
-        {
-            profitNow = TrailingTwelveMonths.Sum(quarters, periodIndex, x => x.ProfitOnSales);
-            profitBefore = TrailingTwelveMonths.Sum(quarters, periodIndex - 4, x => x.ProfitOnSales);
-        }
+        var incomeBefore = ContinuingNetIncome(quarters, yearEarlier);
+        var (profitNow, profitBefore) = ComparableProfit(quarters, periodIndex, yearEarlier);
 
         if (revenueNow is not { } revenue || revenueBefore is not { } previousRevenue || incomeNow is not { } income
             || incomeBefore is not { } previousIncome || profitNow is not { } profit || profitBefore is not { } previousProfit
@@ -33,9 +27,24 @@ public static class DirectionTest
         var incomeGrowth = income / previousIncome - 1;
         var marginChange = profit / revenue - previousProfit / previousRevenue;
 
-        return (revenueGrowth > 0 ? 1 : 0)
-               + (marginChange >= MarginTolerance ? 1 : 0)
-               + (incomeGrowth >= revenueGrowth ? 1 : 0);
+        var revenueGrew = revenueGrowth > 0;
+        var marginHeld = marginChange >= MarginTolerance;
+        var incomeKeptPaceWithRevenue = incomeGrowth >= revenueGrowth;
+        return new[] { revenueGrew, marginHeld, incomeKeptPaceWithRevenue }.Count(x => x);
+    }
+
+    private static (double? Now, double? Before) ComparableProfit(IReadOnlyList<Quarter> quarters, int periodIndex, int yearEarlier)
+    {
+        var grossProfitNow = TrailingTwelveMonths.Sum(quarters, periodIndex, x => x.GrossProfitOnSales);
+        var grossProfitBefore = TrailingTwelveMonths.Sum(quarters, yearEarlier, x => x.GrossProfitOnSales);
+        if (grossProfitNow is not null && grossProfitBefore is not null)
+        {
+            return (grossProfitNow, grossProfitBefore);
+        }
+
+        var profitOnSalesNow = TrailingTwelveMonths.Sum(quarters, periodIndex, x => x.ProfitOnSales);
+        var profitOnSalesBefore = TrailingTwelveMonths.Sum(quarters, yearEarlier, x => x.ProfitOnSales);
+        return (profitOnSalesNow, profitOnSalesBefore);
     }
 
     private static double? ContinuingNetIncome(IReadOnlyList<Quarter> quarters, int periodIndex) =>

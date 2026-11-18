@@ -8,6 +8,8 @@ namespace StockInsight.Domain.Algorithm.Backtest;
 
 public sealed class BacktestBook : IStrategyBook
 {
+    private const double BasisPointsPerUnit = 1e4;
+
     private readonly double _buyFactor;
     private readonly double _sellFactor;
     private readonly OrderedDictionary<string, double> _holdingsInPurchaseOrder = new(StringComparer.Ordinal);
@@ -22,8 +24,9 @@ public sealed class BacktestBook : IStrategyBook
 
     public BacktestBook(StrategyRules rules, DateOnly start)
     {
-        _buyFactor = 1 + rules.CostBasisPoints / 1e4;
-        _sellFactor = 1 - rules.CostBasisPoints / 1e4;
+        var costRate = rules.CostBasisPoints / BasisPointsPerUnit;
+        _buyFactor = 1 + costRate;
+        _sellFactor = 1 - costRate;
         _curve = [new CurvePoint(start, 1.0, 0)];
     }
 

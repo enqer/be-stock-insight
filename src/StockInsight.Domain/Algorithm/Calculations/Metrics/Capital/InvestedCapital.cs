@@ -1,3 +1,4 @@
+using StockInsight.Domain.Algorithm.Calculations.Inputs.Statements;
 using StockInsight.Domain.Algorithm.Calculations.Inputs.Statements.Models;
 
 namespace StockInsight.Domain.Algorithm.Calculations.Metrics.Capital;
@@ -21,8 +22,16 @@ public static class InvestedCapital
         IReadOnlyList<Quarter> quarters, int periodIndex, bool minoritiesInsideEquity)
     {
         var now = At(quarters, periodIndex, minoritiesInsideEquity);
-        var yearAgo = periodIndex >= 4 ? At(quarters, periodIndex - 4, minoritiesInsideEquity).Value : now.Value;
-        var average = now.Value is { } current ? (current + (yearAgo ?? current)) / 2 : (double?)null;
-        return (now, yearAgo, average);
+        var hasYearAgoQuarter = periodIndex >= TrailingTwelveMonths.Quarters;
+        var yearAgo = hasYearAgoQuarter
+            ? At(quarters, periodIndex - TrailingTwelveMonths.Quarters, minoritiesInsideEquity).Value
+            : now.Value;
+        if (now.Value is not { } current)
+        {
+            return (now, yearAgo, null);
+        }
+
+        var yearAgoOrCurrent = yearAgo ?? current;
+        return (now, yearAgo, (current + yearAgoOrCurrent) / 2);
     }
 }

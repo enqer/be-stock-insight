@@ -7,21 +7,31 @@ public sealed class DatePricing(
     IReadOnlyDictionary<string, PriceSeries> prices,
     DateOnly? executionSession = null)
 {
-    public double? TradePrice(string ticker) =>
-        executionSession is { } session
-            ? SessionClose(ticker, session)
-            : prices[ticker].FirstOnOrAfter(decisionDate)?.Close ?? LastClose(ticker);
+    public double? TradePrice(string ticker)
+    {
+        if (executionSession is { } session)
+        {
+            return SessionClose(ticker, session);
+        }
+
+        var firstCloseFromDecisionDate = prices[ticker].FirstOnOrAfter(decisionDate)?.Close;
+        return firstCloseFromDecisionDate ?? LastClose(ticker);
+    }
 
     public bool HasEntryPrice(string ticker, int maxPriceAgeDays)
     {
-        if (prices[ticker].LastOnOrBefore(decisionDate) is not { } last)
+        if (prices[ticker].LastOnOrBefore(decisionDate) is not { } lastBeforeDecision)
         {
             return false;
         }
 
-        return executionSession is { } session
-            ? SessionClose(ticker, session) is not null
-            : decisionDate.DayNumber - last.Date.DayNumber <= maxPriceAgeDays;
+        if (executionSession is { } session)
+        {
+            return SessionClose(ticker, session) is not null;
+        }
+
+        var priceAgeDays = decisionDate.DayNumber - lastBeforeDecision.Date.DayNumber;
+        return priceAgeDays <= maxPriceAgeDays;
     }
 
     public double ValuationPrice(string ticker) => LastClose(ticker) ?? 0.0;
