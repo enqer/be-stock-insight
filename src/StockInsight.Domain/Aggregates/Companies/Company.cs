@@ -10,6 +10,7 @@ public sealed class Company : AuditableEntity, IAggregateRoot
     public Guid Id { get; private init; }
     public string Slug { get; private init; } = string.Empty;
     public FinancialProfile FinancialProfile { get; private init; }
+    public Guid? SectorId { get; private set; }
 
     public IReadOnlyCollection<Statement> Statements => _statements.AsReadOnly();
 
@@ -27,6 +28,8 @@ public sealed class Company : AuditableEntity, IAggregateRoot
             FinancialProfile = financialProfile,
         };
     }
+
+    public void ChangeSector(Guid sectorId) => SectorId = sectorId;
 
     public void AddStatements(IEnumerable<Statement> statements)
     {
