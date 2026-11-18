@@ -12,17 +12,17 @@ public sealed class MacroIndicatorRow
             indicator.name,
             indicator.kind,
             indicator.unit,
-            version.period,
-            version.value
+            latest_version.period,
+            latest_version.value
         FROM macro_indicators indicator
         LEFT JOIN LATERAL (
             SELECT DISTINCT ON (macro_value.period) macro_value.period, macro_value.value
             FROM macro_indicator_values macro_value
             WHERE macro_value.indicator_id = indicator.id
             ORDER BY macro_value.period, macro_value.fetched_at DESC
-        ) version ON true
+        ) latest_version ON true
         WHERE indicator.country = @Country
-        ORDER BY indicator.code, version.period
+        ORDER BY indicator.code, latest_version.period
         """;
 
     public Guid Id { get; init; }

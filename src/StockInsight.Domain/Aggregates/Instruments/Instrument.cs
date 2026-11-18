@@ -28,7 +28,7 @@ public sealed class Instrument : IAggregateRoot
         return New(ticker, name, isin, InstrumentKind.Stock, companyId);
     }
 
-    public static Instrument Index(Ticker ticker, string name) => New(ticker, name, null, InstrumentKind.Index, null);
+    public static Instrument Index(Ticker ticker, string name) => New(ticker, name, isin: null, InstrumentKind.Index, companyId: null);
 
     public void Rename(Ticker ticker, string name)
     {

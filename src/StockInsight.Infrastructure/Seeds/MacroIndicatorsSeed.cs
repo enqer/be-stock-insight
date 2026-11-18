@@ -16,18 +16,19 @@ public sealed class MacroIndicatorsSeed(
     {
         foreach (var country in options.Value.Countries)
         {
-            var suffix = $"{country.ToLowerInvariant()}.m.txt";
-            var series = Directory.EnumerateFiles(Path.Combine(options.Value.Directory, country.ToLowerInvariant()), $"*{suffix}")
-                .ToDictionary(
-                    x => Path.GetFileName(x)[..^suffix.Length],
-                    x => (IReadOnlyList<(DateOnly Period, double Value)>)ReadSeries(x));
+            var monthlyFileSuffix = $"{country.ToLowerInvariant()}.m.txt";
+            var countryDirectory = Path.Combine(options.Value.Directory, country.ToLowerInvariant());
+            var series = Directory.EnumerateFiles(countryDirectory, $"*{monthlyFileSuffix}")
+                .ToDictionary(x => IndicatorCodeOf(x, monthlyFileSuffix), ReadSeries);
 
             var added = await import.ImportAsync(country, series, cancellationToken);
             logger.LogInformation("Macro indicators {Country}: {Series} series, {Added} new values", country, series.Count, added);
         }
     }
 
-    internal static List<(DateOnly Period, double Value)> ReadSeries(string path)
+    private static string IndicatorCodeOf(string path, string monthlyFileSuffix) => Path.GetFileName(path)[..^monthlyFileSuffix.Length];
+
+    internal static IReadOnlyList<(DateOnly Period, double Value)> ReadSeries(string path)
     {
         using var reader = new StreamReader(path);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);

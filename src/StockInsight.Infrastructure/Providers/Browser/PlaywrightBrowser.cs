@@ -12,8 +12,8 @@ public sealed class PlaywrightBrowser(IHostEnvironment environment) : IAsyncDisp
 
     public async Task<PlaywrightSession> OpenAsync(string url)
     {
-        _browser ??= await LaunchChromiumAsync();
-        var context = await _browser.NewContextAsync();
+        var browser = await GetOrLaunchChromiumAsync();
+        var context = await browser.NewContextAsync();
         try
         {
             var page = await context.NewPageAsync();
@@ -28,15 +28,21 @@ public sealed class PlaywrightBrowser(IHostEnvironment environment) : IAsyncDisp
         }
     }
 
-    private async Task<IBrowser> LaunchChromiumAsync()
+    private async Task<IBrowser> GetOrLaunchChromiumAsync()
     {
+        if (_browser is not null)
+        {
+            return _browser;
+        }
+
         if (environment.IsDevelopment())
         {
             await InstallChromiumAsync();
         }
 
         _playwright = await Playwright.CreateAsync();
-        return await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = true });
+        _browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = true });
+        return _browser;
     }
 
     private static async Task InstallChromiumAsync()

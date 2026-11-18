@@ -43,7 +43,7 @@ public sealed class DecisionRun : AuditableEntity, IAggregateRoot
             ExecutedOn = executedOn,
         };
         run._verdicts.AddRange(verdicts.Select(x => DecisionVerdict.Create(run.Id, x.InstrumentId, x.Reason, x.PeriodEnd)));
-        run._ranking.AddRange(ranking.Select((x, i) => DecisionRankingEntry.Create(run.Id, i + 1, x)));
+        run._ranking.AddRange(ranking.Select((x, i) => DecisionRankingEntry.Create(run.Id, position: i + 1, x)));
         return run;
     }
 

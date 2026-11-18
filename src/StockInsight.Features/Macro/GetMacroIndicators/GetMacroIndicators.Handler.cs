@@ -21,16 +21,17 @@ public static partial class GetMacroIndicators
         var values = rows.Where(x => x.Period is not null).Select(x => (Period: x.Period!.Value, Value: x.Value!.Value)).ToList();
         if (values.Count == 0)
         {
-            return new Response(indicator.Id, indicator.Country, indicator.Code, indicator.Name, indicator.Kind, indicator.Unit, null, null, null, []);
+            return new Response(
+                indicator.Id, indicator.Country, indicator.Code, indicator.Name, indicator.Kind, indicator.Unit,
+                Period: null, Value: null, PreviousValue: null, RecentValues: []);
         }
 
-        var last = values[^1];
-        var sameMonthLastYear = new DateOnly(last.Period.Year - 1, last.Period.Month, 1);
+        var latest = values[^1];
+        double? previousValue = values.Count > 1 ? values[^2].Value : null;
+        var sameMonthLastYear = new DateOnly(latest.Period.Year - 1, latest.Period.Month, 1);
+        var lastYearValues = values.Where(x => x.Period >= sameMonthLastYear).Select(x => x.Value).ToList();
         return new Response(
             indicator.Id, indicator.Country, indicator.Code, indicator.Name, indicator.Kind, indicator.Unit,
-            last.Period,
-            last.Value,
-            values.Count > 1 ? values[^2].Value : null,
-            values.Where(x => x.Period >= sameMonthLastYear).Select(x => x.Value).ToList());
+            latest.Period, latest.Value, previousValue, lastYearValues);
     }
 }

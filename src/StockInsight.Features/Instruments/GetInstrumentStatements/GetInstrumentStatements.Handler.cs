@@ -15,7 +15,7 @@ public static partial class GetInstrumentStatements
         {
             var symbol = new Ticker(ticker);
             var statements = await dbContext.Statements.AsNoTracking()
-                .Where(Statement.KnownAtFetch)
+                .Where(x => x.PublishedAt == null || x.PublishedAt <= x.FetchedAt)
                 .Where(x => dbContext.Instruments.Any(y => y.CompanyId == x.CompanyId && y.Ticker == symbol))
                 .ToListAsync(cancellationToken);
 
@@ -30,11 +30,13 @@ public static partial class GetInstrumentStatements
         }
     }
 
-    internal static Response ToResponse(Statement statement) =>
-        new(
-            statement.Period,
-            statement.PublishedAt,
-            statement.GetType().GetProperties()
-                .Where(x => x.PropertyType == typeof(double?) && x.GetValue(statement) is double)
-                .ToDictionary(x => JsonNamingPolicy.CamelCase.ConvertName(x.Name), x => (double)x.GetValue(statement)!));
+    internal static Response ToResponse(Statement statement)
+    {
+        var filledItems = statement.GetType().GetProperties()
+            .Where(x => x.PropertyType == typeof(double?))
+            .Select(x => (Name: JsonNamingPolicy.CamelCase.ConvertName(x.Name), Value: (double?)x.GetValue(statement)))
+            .Where(x => x.Value is not null)
+            .ToDictionary(x => x.Name, x => x.Value!.Value);
+        return new Response(statement.Period, statement.PublishedAt, filledItems);
+    }
 }
