@@ -81,7 +81,7 @@ public static class Extensions
 
             app.MapHealthChecks(AlivenessEndpointPath, new HealthCheckOptions
             {
-                Predicate = r => r.Tags.Contains("live")
+                Predicate = x => x.Tags.Contains("live")
             });
         }
 

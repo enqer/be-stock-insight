@@ -13,10 +13,10 @@ public sealed class InstrumentRow
             instrument.isin,
             instrument.kind,
             company.financial_profile,
-            daily_price.date,
-            daily_price.close,
-            daily_price.previous_close,
-            daily_price.volume
+            latest_price.date,
+            latest_price.close,
+            latest_price.previous_close,
+            latest_price.volume
         FROM instruments instrument
         LEFT JOIN companies company ON instrument.company_id = company.id
         LEFT JOIN LATERAL (
@@ -29,7 +29,7 @@ public sealed class InstrumentRow
             WHERE prices.instrument_id = instrument.id
             ORDER BY prices.date DESC
             LIMIT 1
-        ) daily_price ON true
+        ) latest_price ON true
         WHERE instrument.ticker = @Ticker
         """;
 

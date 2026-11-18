@@ -21,7 +21,7 @@ public sealed class DailyPrice
             throw new ArgumentOutOfRangeException(nameof(close), close, "close must be a positive finite number");
         }
 
-        if (volume is { } v && (!double.IsFinite(v) || v < 0))
+        if (volume is { } knownVolume && (!double.IsFinite(knownVolume) || knownVolume < 0))
         {
             throw new ArgumentOutOfRangeException(nameof(volume), volume, "volume must be a non-negative finite number");
         }

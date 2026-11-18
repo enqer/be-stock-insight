@@ -7,8 +7,6 @@ public sealed class PlaywrightBrowser(IHostEnvironment environment) : IAsyncDisp
 {
     private const int PageTimeoutMilliseconds = 60_000;
 
-    private static readonly Lazy<Task> _chromiumInstallation = new(InstallChromiumAsync);
-
     private IPlaywright? _playwright;
     private IBrowser? _browser;
 
@@ -16,27 +14,25 @@ public sealed class PlaywrightBrowser(IHostEnvironment environment) : IAsyncDisp
     {
         _browser ??= await LaunchChromiumAsync();
         var context = await _browser.NewContextAsync();
-        var page = await context.NewPageAsync();
-        page.SetDefaultTimeout(PageTimeoutMilliseconds);
-
         try
         {
+            var page = await context.NewPageAsync();
+            page.SetDefaultTimeout(PageTimeoutMilliseconds);
             await page.GotoAsync(url, new PageGotoOptions { WaitUntil = WaitUntilState.DOMContentLoaded });
+            return new PlaywrightSession(context, page);
         }
         catch
         {
             await context.DisposeAsync();
             throw;
         }
-
-        return new PlaywrightSession(context, page);
     }
 
     private async Task<IBrowser> LaunchChromiumAsync()
     {
         if (environment.IsDevelopment())
         {
-            await _chromiumInstallation.Value;
+            await InstallChromiumAsync();
         }
 
         _playwright = await Playwright.CreateAsync();
