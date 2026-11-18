@@ -5,10 +5,6 @@
     <PackageReference Include="CsvHelper" />
     <PackageReference Include="Dapper" />
     <PackageReference Include="EFCore.NamingConventions" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Hangfire.NetCore" />
     <PackageReference Include="Hangfire.PostgreSql" />
     <PackageReference Include="Microsoft.Playwright" />
@@ -24,6 +20,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="StockInsight.Infrastructure.Tests" />
+    <InternalsVisibleTo Include="StockInsight.AcceptanceTests" />
   </ItemGroup>
 
 </Project>

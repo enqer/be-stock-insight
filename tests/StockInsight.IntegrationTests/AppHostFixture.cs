@@ -2,12 +2,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace StockInsight.IntegrationTests;
 
-/// <summary>
-/// Starts the whole AppHost (Postgres container + API) once per test assembly. Requires a running Docker.
-/// </summary>
 public sealed class AppHostFixture : IAsyncLifetime
 {
-    private static readonly TimeSpan StartupTimeout = TimeSpan.FromMinutes(3);
+    private static readonly TimeSpan _startupTimeout = TimeSpan.FromMinutes(3);
 
     private DistributedApplication? _app;
 
@@ -21,9 +18,9 @@ public sealed class AppHostFixture : IAsyncLifetime
 
         _app = await builder.BuildAsync();
 
-        using var cts = new CancellationTokenSource(StartupTimeout);
-        await _app.StartAsync(cts.Token);
-        await _app.ResourceNotifications.WaitForResourceHealthyAsync("api", cts.Token);
+        using var startupCancellation = new CancellationTokenSource(_startupTimeout);
+        await _app.StartAsync(startupCancellation.Token);
+        await _app.ResourceNotifications.WaitForResourceHealthyAsync("api", startupCancellation.Token);
     }
 
     public async ValueTask DisposeAsync()
@@ -33,10 +30,4 @@ public sealed class AppHostFixture : IAsyncLifetime
             await _app.DisposeAsync();
         }
     }
-}
-
-[CollectionDefinition(Name)]
-public sealed class AppHostCollection : ICollectionFixture<AppHostFixture>
-{
-    public const string Name = "AppHost";
 }

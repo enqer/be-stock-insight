@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\StockInsight.Features\StockInsight.Features.csproj" />
+    <Compile Include="..\StockInsight.Domain.Tests\Builders\TestStatements.cs" Link="Builders\TestStatements.cs" />
   </ItemGroup>
 
 </Project>
